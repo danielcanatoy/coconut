@@ -44,6 +44,22 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
   "Heavy Equipment Operator",
 ];
 
+  const [profilePreview, setProfilePreview] = useState<string>("");
+
+  const handleProfileImageChange = (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    setProfilePreview(reader.result as string);
+  };
+  reader.readAsDataURL(file);
+};
+
+
 
   const [formData, setFormData] = useState<WorkerFormData>({
     firstName: "",
@@ -123,6 +139,8 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
 
     window.location.reload();
   };
+
+  
   
 
   return (
@@ -142,6 +160,44 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
 
       <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
         <CardContent className="p-8">
+<div className="flex justify-center items-start">
+  <label className="cursor-pointer">
+    <div
+      className="
+        w-[120px]
+        h-[120px]
+        rounded-full
+        bg-gray-100
+        flex
+        items-center
+        justify-center
+        overflow-hidden
+        hover:bg-gray-200
+      "
+    >
+      {profilePreview ? (
+        <img
+          src={profilePreview}
+          alt="Profile Preview"
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <span className="text-gray-500 text-sm">
+          Upload
+        </span>
+      )}
+    </div>
+
+    <input
+      type="file"
+      accept="image/*"
+      className="hidden"
+      onChange={handleProfileImageChange}
+    />
+  </label>
+</div>
+
+          
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
