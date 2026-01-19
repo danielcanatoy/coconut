@@ -1,5 +1,5 @@
 import { Button } from "../../../../components/ui/button";
-import { Input } from "../../../../components/ui/input";
+
 
 export const HeroSection = (): JSX.Element => {
   return (
@@ -32,14 +32,10 @@ export const HeroSection = (): JSX.Element => {
         </Button>
       </div>
 
-      <Input
-        type="email"
-        defaultValue="danielcanatoy@gmail.com"
-        className="absolute top-[479px] left-[109px] w-[367px] h-[47px] bg-[#d9d9d9] rounded-[60px] px-[18px] [font-family:'Jost',Helvetica] font-normal italic text-[#00000066] text-base border-0"
-      />
+      
 
       <img
-        className="absolute top-64 left-[1266px] w-3.5 h-[352px]"
+        className="absolute top-64 left-[1478px] w-3.5 h-[352px]"
         alt="Rectangle"
         src="/rectangle-39.svg"
       />
