@@ -135,7 +135,7 @@ export const HireWorkerPage = (): JSX.Element => {
                   onClick={handlePostJob}
                   className="bg-white hover:bg-gray-100 text-black rounded-[60px] h-[54px] w-[180px] [font-family:'Jost',Helvetica] font-semibold text-lg"
                 >
-                  Post Job
+                  Post Jobs
                 </Button>
               </div>
             </div>
