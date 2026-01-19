@@ -5,15 +5,16 @@ export const WorkerHome = (): JSX.Element => {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h1 className="[font-family:'Jost',Helvetica] font-bold text-black text-4xl">
-          Hello User!
+        <h1 className="[font-family:'Jost',Helvetica] font-normal text-black text-1 bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
+        Hello User!
         </h1>
+
         <span className="[font-family:'Jost',Helvetica] font-normal text-gray-600 text-base">
           <Time />
         </span>
       </div>
 
-      <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
+      <Card className="bg-[#F8D59D] border-none rounded-[20px] shadow-[0px_4px_12px_#00000020] shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
         <CardContent className="p-8">
           <h2 className="[font-family:'Jost',Helvetica] font-bold text-black text-2xl mb-4">
             Today's assigned job
@@ -28,9 +29,9 @@ export const WorkerHome = (): JSX.Element => {
       </Card>
 
       <div className="grid grid-cols-2 gap-6">
-        <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
+        <Card className="bg-[#98FF7E] border-none rounded-[20px] shadow-[0px_4px_12px_#00000020] shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
           <CardContent className="p-8">
-            <p className="[font-family:'Jost',Helvetica] font-semibold text-gray-600 text-sm mb-2">
+            <p className="[font-family:'Jost',Helvetica] font-semibold text-black-600 text-sm mb-2">
               TIME IN
             </p>
             <p className="[font-family:'Jost',Helvetica] font-bold text-[#ff9d00] text-3xl">
@@ -39,9 +40,9 @@ export const WorkerHome = (): JSX.Element => {
           </CardContent>
         </Card>
 
-        <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
+        <Card className="bg-[#FF5E50] border-none rounded-[20px] shadow-[0px_4px_12px_#00000020] shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
           <CardContent className="p-8">
-            <p className="[font-family:'Jost',Helvetica] font-semibold text-gray-600 text-sm mb-2">
+            <p className="[font-family:'Jost',Helvetica] font-semibold text-black-600 text-sm mb-2">
               TIME OUT
             </p>
             <p className="[font-family:'Jost',Helvetica] font-bold text-[#ff9d00] text-3xl">
@@ -51,10 +52,10 @@ export const WorkerHome = (): JSX.Element => {
         </Card>
       </div>
 
-      <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
+      <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020] shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
         <CardContent className="p-8">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="[font-family:'Jost',Helvetica] font-semibold text-gray-600 text-sm">
+          <div className="flex items-center justify-between mb-0">
+            <h3 className="[font-family:'Jost',Helvetica] font-semibold text-black text-3xl">
               HOURS WORKED TODAY
             </h3>
             <div className="w-32 h-32 rounded-full bg-black flex items-center justify-center">
@@ -71,7 +72,7 @@ export const WorkerHome = (): JSX.Element => {
         </CardContent>
       </Card>
 
-      <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
+      <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020] shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
         <CardContent className="p-8">
           <h3 className="[font-family:'Jost',Helvetica] font-bold text-black text-xl mb-6">
             Performance report

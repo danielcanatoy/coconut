@@ -1,4 +1,4 @@
-import { Card, CardContent } from "../../../components/ui/card";
+
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
 import { useState } from "react";
@@ -81,9 +81,11 @@ export const WorkerMessages = (): JSX.Element => {
   return (
     <div className="grid grid-cols-4 gap-6 h-[calc(100vh-120px)]">
       <div className="col-span-1">
-        <h2 className="[font-family:'Jost',Helvetica] font-bold text-black text-2xl mb-4">
+        <h2 className="[font-family:'Jost',Helvetica] font-normal text-black text-1 bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
           Conversations
         </h2>
+        <br />
+        <br />
 
         <div className="space-y-2 overflow-y-auto">
           {mockConversations.map((conv) => (

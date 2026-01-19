@@ -13,9 +13,13 @@ interface WorkerFormData {
   email: string;
   mobileNumber: string;
   password: string;
+
   skills: string[];
+  canReadPlans: boolean;
+  canWorkOvertime: boolean;
+
   experience: string;
-  certifications: string;
+  certifications: File | null;
   availability: string;
   preferredWages: string;
   workLocation: string;
@@ -30,6 +34,16 @@ interface WorkerProfileProps {
 export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
   const location = useLocation();
   const { email, password, userType } = location.state || {};
+  const skillOptions = [
+  "Carpenter",
+  "Mason",
+  "Welder",
+  "Painter",
+  "Electrician",
+  "Plumber",
+  "Heavy Equipment Operator",
+];
+
 
   const [formData, setFormData] = useState<WorkerFormData>({
     firstName: "",
@@ -40,9 +54,12 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
     email: email || "",
     mobileNumber: "",
     password: password || "",
+
     skills: [],
+    canReadPlans: false,
+    canWorkOvertime: false,
     experience: "",
-    certifications: "",
+    certifications: null,
     availability: "",
     preferredWages: "",
     workLocation: "",
@@ -106,6 +123,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
 
     window.location.reload();
   };
+  
 
   return (
     <div className="space-y-8">
@@ -120,6 +138,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
           Cancel
         </Button>
       </div>
+      
 
       <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
         <CardContent className="p-8">
@@ -132,8 +151,11 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 type="text"
                 value={formData.firstName}
                 onChange={(e) => handleChange("firstName", e.target.value)}
-                className="w-full h-[44px] bg-gray-100 rounded-lg px-4 [font-family:'Jost',Helvetica] font-normal text-black border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+                className="w-full h-[44px] bg-white px-4
+                  [font-family:'Jost',Helvetica] font-normal text-black
+                  border border-gray-300 rounded-lg
+                  focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                  />
             </div>
 
             <div>
@@ -144,8 +166,11 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 type="text"
                 value={formData.middleInitial}
                 onChange={(e) => handleChange("middleInitial", e.target.value)}
-                className="w-full h-[44px] bg-gray-100 rounded-lg px-4 [font-family:'Jost',Helvetica] font-normal text-black border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+                className="w-full h-[44px] bg-white px-4
+                [font-family:'Jost',Helvetica] font-normal text-black
+                border border-gray-300 rounded-lg
+                focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                />
             </div>
 
             <div>
@@ -156,8 +181,11 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 type="text"
                 value={formData.lastName}
                 onChange={(e) => handleChange("lastName", e.target.value)}
-                className="w-full h-[44px] bg-gray-100 rounded-lg px-4 [font-family:'Jost',Helvetica] font-normal text-black border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+                className="w-full h-[44px] bg-white px-4
+                  [font-family:'Jost',Helvetica] font-normal text-black
+                  border border-gray-300 rounded-lg
+                  focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                  />
             </div>
           </div>
 
@@ -170,8 +198,11 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 type="date"
                 value={toDateInputValue(formData.dateOfBirth)}
                 onChange={(e) => handleChange("dateOfBirth", e.target.value)}
-                className="w-full h-[44px] bg-gray-100 rounded-lg px-4 [font-family:'Jost',Helvetica] font-normal text-black border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+                className="w-full h-[44px] bg-white px-4
+                  [font-family:'Jost',Helvetica] font-normal text-black
+                  border border-gray-300 rounded-lg
+                  focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                  />
             </div>
 
             <div>
@@ -182,8 +213,11 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 type="text"
                 value={formData.gender}
                 onChange={(e) => handleChange("gender", e.target.value)}
-                className="w-full h-[44px] bg-gray-100 rounded-lg px-4 [font-family:'Jost',Helvetica] font-normal text-black border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+                 className="w-full h-[44px] bg-white px-4
+                  [font-family:'Jost',Helvetica] font-normal text-black
+                  border border-gray-300 rounded-lg
+                  focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                  />
             </div>
           </div>
 
@@ -200,8 +234,11 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleChange("email", e.target.value)}
-                className="w-full h-[44px] bg-gray-100 rounded-lg px-4 [font-family:'Jost',Helvetica] font-normal text-black border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+                 className="w-full h-[44px] bg-white px-4
+                  [font-family:'Jost',Helvetica] font-normal text-black
+                  border border-gray-300 rounded-lg
+                  focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                  />
             </div>
 
             <div>
@@ -212,14 +249,75 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 type="text"
                 value={formData.mobileNumber}
                 onChange={(e) => handleChange("mobileNumber", e.target.value)}
-                className="w-full h-[44px] bg-gray-100 rounded-lg px-4 [font-family:'Jost',Helvetica] font-normal text-black border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+                className="w-full h-[44px] bg-white px-4
+                  [font-family:'Jost',Helvetica] font-normal text-black
+                  border border-gray-300 rounded-lg
+                  focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                  />
             </div>
           </div>
 
           <h3 className="[font-family:'Jost',Helvetica] font-bold text-black text-lg mb-4">
             Work & Skill (Checkbox)
           </h3>
+          
+          {/* Skills Checkbox Selection */}
+              <div className="col-span-2 mt-4">
+              <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
+                Select Skills
+              </label>
+
+              <div className="grid grid-cols-2 gap-3">
+                {skillOptions.map((skill) => (
+                  <label key={skill} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={formData.skills.includes(skill)}
+                      onChange={(e) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          skills: e.target.checked
+                            ? [...prev.skills, skill]
+                            : prev.skills.filter((s) => s !== skill),
+                        }));
+                      }}
+                    />
+                    {skill}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+                          {/* Capability Checkboxes */}
+              <div className="col-span-2 mt-4">
+                <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
+                  Capabilities
+                </label>
+
+                <label className="flex items-center gap-2 text-sm mb-2">
+                  <input
+                    type="checkbox"
+                    checked={formData.canReadPlans}
+                    onChange={(e) =>
+                      handleChange("canReadPlans", e.target.checked)
+                    }
+                  />
+                  Can Read Construction Plans
+                </label>
+
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={formData.canWorkOvertime}
+                    onChange={(e) =>
+                      handleChange("canWorkOvertime", e.target.checked)
+                    }
+                  />
+                  Can Work Overtime
+                </label>
+              </div>
+
+
 
           <div className="grid grid-cols-2 gap-6 mb-8">
             <div>
@@ -246,20 +344,35 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 type="text"
                 value={formData.experience}
                 onChange={(e) => handleChange("experience", e.target.value)}
-                className="w-full h-[44px] bg-gray-100 rounded-lg px-4 [font-family:'Jost',Helvetica] font-normal text-black border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+                className="w-full h-[44px] bg-white px-4
+                  [font-family:'Jost',Helvetica] font-normal text-black
+                  border border-gray-300 rounded-lg
+                  focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                  />
             </div>
 
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
                 Certifications
               </label>
-              <Input
-                type="text"
-                value={formData.certifications}
-                onChange={(e) => handleChange("certifications", e.target.value)}
-                className="w-full h-[44px] bg-gray-100 rounded-lg px-4 [font-family:'Jost',Helvetica] font-normal text-black border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+              <input
+  type="file"
+  accept=".pdf,.jpg,.jpeg,.png"
+  
+  onChange={(e) =>
+    handleChange(
+      "certifications",
+      e.target.files ? e.target.files[0] : null
+    )
+  
+  }
+   className="w-full h-[44px] bg-white px-4
+                  [font-family:'Jost',Helvetica] font-normal text-black
+                  border border-gray-300 rounded-lg
+                  focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                  />
+
+
             </div>
 
             <div>
@@ -270,8 +383,11 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 type="text"
                 value={formData.availability}
                 onChange={(e) => handleChange("availability", e.target.value)}
-                className="w-full h-[44px] bg-gray-100 rounded-lg px-4 [font-family:'Jost',Helvetica] font-normal text-black border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+                 className="w-full h-[44px] bg-white px-4
+                  [font-family:'Jost',Helvetica] font-normal text-black
+                  border border-gray-300 rounded-lg
+                  focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                  />
             </div>
 
             <div>
@@ -282,8 +398,11 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 type="text"
                 value={formData.preferredWages}
                 onChange={(e) => handleChange("preferredWages", e.target.value)}
-                className="w-full h-[44px] bg-gray-100 rounded-lg px-4 [font-family:'Jost',Helvetica] font-normal text-black border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+                className="w-full h-[44px] bg-white px-4
+                  [font-family:'Jost',Helvetica] font-normal text-black
+                  border border-gray-300 rounded-lg
+                  focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                  />
             </div>
 
             <div>
@@ -294,8 +413,11 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 type="text"
                 value={formData.workLocation}
                 onChange={(e) => handleChange("workLocation", e.target.value)}
-                className="w-full h-[44px] bg-gray-100 rounded-lg px-4 [font-family:'Jost',Helvetica] font-normal text-black border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+                 className="w-full h-[44px] bg-white px-4
+                  [font-family:'Jost',Helvetica] font-normal text-black
+                  border border-gray-300 rounded-lg
+                  focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                  />
             </div>
 
             <div>
@@ -311,7 +433,12 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                     e.target.value.split(",").map((s) => s.trim())
                   )
                 }
-              />
+                 className="w-full h-[44px] bg-white px-4
+                  [font-family:'Jost',Helvetica] font-normal text-black
+                  border border-gray-300 rounded-lg
+                  focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                  />
+              
             </div>
           </div>
 
