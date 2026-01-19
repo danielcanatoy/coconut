@@ -81,7 +81,7 @@ export const CompanyListings = (): JSX.Element => {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-        }
+        },
       ).then((r) => r.json());
 
       setListings(updated);
@@ -113,40 +113,135 @@ export const CompanyListings = (): JSX.Element => {
         </div>
 
         <div className="flex gap-3">
-          <Button onClick={() => setShowCreateForm(false)}>
+          <Button variant="outline" onClick={() => setShowCreateForm(false)}>
             Your Listings
           </Button>
-          <Button onClick={() => setShowCreateForm(true)}>
+          <Button
+            className="bg-[#ff9d00]"
+            onClick={() => setShowCreateForm(true)}
+          >
             Create New Listing
           </Button>
         </div>
       </div>
 
-      {/* LISTINGS */}
+      {/* CONTENT */}
       {!showCreateForm ? (
-        <div className="grid grid-cols-2 gap-6">
+        /* ===================== LISTINGS ===================== */
+        <div className="grid grid-cols-2 gap-8">
           {listings.map((listing) => (
-            <Card key={listing.id} className="bg-[#ff9d00]">
-              <CardContent className="p-6">
-                <h3 className="font-bold">{listing.company}</h3>
-                <p>{listing.inNeedOf}</p>
-                <p>Salary: {listing.salary}</p>
-                <p>Location: {listing.location}</p>
+            <Card
+              key={listing.id}
+              className="bg-[#f6b14a] border-none shadow-md p-3"
+            >
+              <CardContent className="p-0">
+                <div className="bg-white rounded-xl p-6 space-y-3">
+                  {/* TITLE */}
+                  <h3 className="text-center font-bold text-sm">
+                    {listing.position}
+                  </h3>
+
+                  {/* IN NEED OF */}
+                  <div className="text-sm">
+                    <p className="font-semibold">In need of :</p>
+                    <p className="text-[#ff8c00] font-bold">
+                      {listing.inNeedOf}
+                    </p>
+                  </div>
+
+                  {/* DETAILS */}
+                  <div className="text-xs space-y-1 text-gray-700">
+                    <p>
+                      Time in :{" "}
+                      <span className="font-semibold">{listing.timeIn}</span>
+                    </p>
+                    <p>
+                      Time out :{" "}
+                      <span className="font-semibold">{listing.timeOut}</span>
+                    </p>
+                    <p>
+                      Salary :{" "}
+                      <span className="font-semibold">{listing.salary}</span>
+                    </p>
+                    <p>
+                      Total Work Days :{" "}
+                      <span className="font-semibold">{listing.workDays}</span>
+                    </p>
+                    <p>
+                      Location :{" "}
+                      <span className="font-semibold">{listing.location}</span>
+                    </p>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           ))}
         </div>
       ) : (
-        /* CREATE FORM */
-        <Card>
-          <CardContent className="p-8">
-            <Input
-              placeholder="Project Name"
-              value={formData.position}
-              onChange={(e) => handleInputChange("position", e.target.value)}
-            />
-            {/* keep your other inputs */}
-            <Button onClick={handleCreateListing}>Create Listing</Button>
+        /* ===================== CREATE FORM ===================== */
+        <Card className="max-w-md mx-auto bg-[#f6b14a] border-none shadow-lg p-3">
+          <CardContent className="p-0">
+            <div className="bg-white rounded-xl p-6 space-y-4">
+              <h2 className="text-center font-bold text-sm">
+                Create Job Listing
+              </h2>
+
+              <Input
+                placeholder="Project Title"
+                value={formData.position}
+                onChange={(e) => handleInputChange("position", e.target.value)}
+              />
+
+              <Input
+                placeholder="In need of (e.g. Carpenter)"
+                value={formData.inNeedOf}
+                onChange={(e) => handleInputChange("inNeedOf", e.target.value)}
+              />
+
+              <Input
+                placeholder="Quantity needed"
+                value={formData.count}
+                onChange={(e) => handleInputChange("count", e.target.value)}
+              />
+
+              <div className="grid grid-cols-2 gap-3">
+                <Input
+                  placeholder="Time in"
+                  value={formData.timeIn}
+                  onChange={(e) => handleInputChange("timeIn", e.target.value)}
+                />
+                <Input
+                  placeholder="Time out"
+                  value={formData.timeOut}
+                  onChange={(e) => handleInputChange("timeOut", e.target.value)}
+                />
+              </div>
+
+              <Input
+                placeholder="Salary per day"
+                value={formData.salary}
+                onChange={(e) => handleInputChange("salary", e.target.value)}
+              />
+
+              <Input
+                placeholder="Total work days"
+                value={formData.workDays}
+                onChange={(e) => handleInputChange("workDays", e.target.value)}
+              />
+
+              <Input
+                placeholder="Location"
+                value={formData.location}
+                onChange={(e) => handleInputChange("location", e.target.value)}
+              />
+
+              <Button
+                className="w-full bg-[#ff9d00]"
+                onClick={handleCreateListing}
+              >
+                Post
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
