@@ -1,25 +1,34 @@
 import { Card, CardContent } from "../../../components/ui/card";
-import { Button } from "../../../components/ui/button";
 import { useState } from "react";
+
+/* =======================
+   TYPES
+======================= */
+interface Worker {
+  name: string;
+  role: string;
+}
 
 interface Project {
   id: number;
   name: string;
-  status?: string;
-  startDate?: string;
-  endDate?: string;
-  totalDays?: number;
-  completedDays?: number;
   inNeedOf?: string;
-  count?: number;
   timeIn?: string;
   timeOut?: string;
   salary?: string;
   workDays?: number;
   progress?: number;
   location?: string;
+  workers?: Worker[];
+  startDate?: string;
+  endDate?: string;
+  totalDays?: number;
+  completedDays?: number;
 }
 
+/* =======================
+   DATA
+======================= */
 const ongoingProjects: Project[] = [
   {
     id: 1,
@@ -31,10 +40,27 @@ const ongoingProjects: Project[] = [
     workDays: 14,
     progress: 8,
     location: "Rizal St, Laguna Province",
+    workers: [
+      { name: "Daniel Canatoy", role: "Steelman" },
+      { name: "Marvin San Diego", role: "Mason" },
+      { name: "Christyn Devera", role: "Taga kape" },
+      { name: "Jhan Talania", role: "Carpenter" },
+    ],
   },
   {
     id: 2,
     name: "House Renovation",
+    inNeedOf: "Painter (5)",
+    timeIn: "8:00 AM",
+    timeOut: "4:00 PM",
+    salary: "₱700.00/day",
+    workDays: 10,
+    progress: 3,
+    location: "Calamba City, Laguna",
+    workers: [
+      { name: "Juan Dela Cruz", role: "Painter" },
+      { name: "Pedro Santos", role: "Painter" },
+    ],
   },
 ];
 
@@ -57,209 +83,212 @@ const completedProjects: Project[] = [
   },
 ];
 
+/* =======================
+   COMPONENT
+======================= */
 export const CompanyProjects = (): JSX.Element => {
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [openProjectId, setOpenProjectId] = useState<number | null>(null);
+  const [selectedWorkers, setSelectedWorkers] = useState<Project | null>(null);
+
+  const panelVisible = !!selectedWorkers;
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <div className="bg-[#ff9d00] rounded-full px-6 py-2">
-          <p className="[font-family:'Jost',Helvetica] font-bold text-black text-lg">
-            Hello User!
-          </p>
-        </div>
-        <span className="[font-family:'Jost',Helvetica] font-normal text-black text-base">
-          08:34:31 PM
-        </span>
-      </div>
+    <div className="relative flex gap-6">
+      {/* =======================
+          LEFT SIDE (PROJECTS)
+      ======================= */}
+      <div className="flex-1 space-y-10">
+        {/* Ongoing Projects */}
+        <h2 className="text-3xl font-bold">Ongoing Projects</h2>
 
-      <h2 className="[font-family:'Jost',Helvetica] font-bold text-black text-3xl">
-        Ongoing Projects
-      </h2>
+        <div className="grid grid-cols-2 gap-6 items-start">
+          {ongoingProjects.map((project) => {
+            const isOpen = openProjectId === project.id;
 
-      <div className="grid grid-cols-2 gap-6 mb-12">
-        {ongoingProjects.map((project) => (
-          <Card
-            key={project.id}
-            className="bg-[#ff9d00] border-none rounded-[20px] shadow-[0px_4px_12px_#00000020] cursor-pointer hover:shadow-lg transition-shadow"
-            onClick={() => setSelectedProject(project)}
-          >
-            <CardContent className="p-6">
-              <h3 className="[font-family:'Jost',Helvetica] font-bold text-black text-xl mb-4">
-                {project.name}
-              </h3>
+            return (
+              <Card
+                key={project.id}
+                className={`
+                  bg-[#FFA800] rounded-2xl shadow-md
+                  transition-transform duration-200
+                  ${isOpen ? "scale-100" : "hover:scale-[1.02]"}
+                `}
+              >
+                <CardContent className="p-5 space-y-3 text-black">
+                  {/* Title */}
+                  <h3
+                    onClick={() =>
+                      setOpenProjectId(isOpen ? null : project.id)
+                    }
+                    className="text-xl font-extrabold text-center cursor-pointer hover:underline"
+                  >
+                    {project.name}
+                  </h3>
 
-              {project.inNeedOf && (
-                <>
-                  <p className="[font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-1">
-                    In need of :
-                  </p>
-                  <p className="[font-family:'Jost',Helvetica] font-bold text-[#ff9d00] text-lg mb-4">
-                    {project.inNeedOf}
-                  </p>
+                  {/* Smooth dropdown */}
+                  <div
+                    className={`
+                      overflow-hidden
+                      transition-[max-height] duration-500 ease-in-out
+                      ${isOpen ? "max-h-96" : "max-h-0"}
+                    `}
+                  >
+                    <div className="bg-white rounded-2xl px-5 py-4 mt-2 space-y-2 text-sm">
+                      <p className="font-semibold">In need of:</p>
+                      <p className="font-bold text-[#FFA800] text-lg">
+                        {project.inNeedOf}
+                      </p>
 
-                  <div className="space-y-2 text-xs mb-4">
-                    {project.timeIn && (
-                      <p className="[font-family:'Jost',Helvetica] font-semibold text-black">
-                        Time in :{" "}
-                        <span className="font-normal text-[#ff9d00]">
+                      <p>
+                        Time in:{" "}
+                        <span className="font-semibold text-[#FFA800]">
                           {project.timeIn}
                         </span>
                       </p>
-                    )}
-                    {project.timeOut && (
-                      <p className="[font-family:'Jost',Helvetica] font-semibold text-black">
-                        Time out :{" "}
-                        <span className="font-normal text-[#ff9d00]">
+
+                      <p>
+                        Time out:{" "}
+                        <span className="font-semibold text-[#FFA800]">
                           {project.timeOut}
                         </span>
                       </p>
-                    )}
-                    {project.salary && (
-                      <p className="[font-family:'Jost',Helvetica] font-semibold text-black">
-                        Salary :{" "}
-                        <span className="font-normal text-[#ff9d00]">
+
+                      <p>
+                        Salary:{" "}
+                        <span className="font-semibold text-[#FFA800]">
                           {project.salary}
                         </span>
                       </p>
-                    )}
-                    {project.workDays && (
-                      <p className="[font-family:'Jost',Helvetica] font-semibold text-black">
-                        Total Work Days :{" "}
-                        <span className="font-normal text-[#ff9d00]">
-                          {project.workDays}
+
+                      <p>
+                        Progress:{" "}
+                        <span className="font-semibold text-[#FFA800]">
+                          {project.progress}/{project.workDays} days
                         </span>
                       </p>
-                    )}
-                    {project.progress && (
-                      <p className="[font-family:'Jost',Helvetica] font-semibold text-black">
-                        Progress :{" "}
-                        <span className="font-normal text-[#ff9d00]">
-                          {project.progress}/{project.workDays} Days
-                        </span>
-                      </p>
-                    )}
-                    {project.location && (
-                      <p className="[font-family:'Jost',Helvetica] font-semibold text-black">
-                        Location :{" "}
-                        <span className="font-normal text-[#ff9d00]">
+
+                      <p>
+                        Location:{" "}
+                        <span className="font-semibold text-[#FFA800]">
                           {project.location}
                         </span>
                       </p>
-                    )}
-                  </div>
 
-                  <div className="flex gap-2 justify-center">
-                    <Button className="bg-white hover:bg-gray-100 text-black rounded-full h-[40px] w-[40px] p-0 flex items-center justify-center">
-                      👁️
-                    </Button>
-                    <Button className="bg-white hover:bg-gray-100 text-black rounded-full h-[40px] w-[40px] p-0 flex items-center justify-center">
-                      👥
-                    </Button>
+                      {/* 👥 BUTTON */}
+                      <div className="flex justify-center pt-2">
+                        <button
+                          onClick={() => setSelectedWorkers(project)}
+                          className="w-10 h-10 bg-[#FFA800] rounded-full flex items-center justify-center
+                                     hover:scale-110 transition"
+                        >
+                          👥
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-        ))}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+
+        {/* Completed Projects */}
+        <h2 className="text-3xl font-bold">Completed Projects</h2>
+
+        <div className="grid grid-cols-2 gap-6 items-start">
+          {completedProjects.map((project) => (
+            <Card
+              key={project.id}
+              className="
+                bg-[#6EFF7A] rounded-2xl shadow-md
+                transition-transform duration-200
+                hover:scale-[1.02]
+              "
+            >
+              <CardContent className="p-5 space-y-3 text-black">
+                {/* Title */}
+                <h3 className="text-xl font-extrabold text-center">
+                  {project.name}
+                </h3>
+
+                {/* White inner box */}
+                <div className="bg-white rounded-2xl px-5 py-4 space-y-2 text-sm">
+                  <p>
+                    Construction Start:{" "}
+                    <span className="font-semibold text-[#FFA800]">
+                      {project.startDate}
+                    </span>
+                  </p>
+                  <p>
+                    Construction End:{" "}
+                    <span className="font-semibold text-[#FFA800]">
+                      {project.endDate}
+                    </span>
+                  </p>
+                  <p>
+                    Total Work Days:{" "}
+                    <span className="font-semibold text-[#FFA800]">
+                      {project.completedDays}/{project.totalDays} days
+                    </span>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
 
-      <h2 className="[font-family:'Jost',Helvetica] font-bold text-black text-3xl">
-        Completed Projects
-      </h2>
-
-      <div className="grid grid-cols-2 gap-6">
-        {completedProjects.map((project) => (
-          <Card
-            key={project.id}
-            className="bg-green-400 border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]"
-          >
-            <CardContent className="p-6">
-              <h3 className="[font-family:'Jost',Helvetica] font-bold text-white text-xl mb-4">
-                {project.name}
-              </h3>
-              <div className="space-y-2 text-sm">
-                <p className="[font-family:'Jost',Helvetica] font-semibold text-white">
-                  Construction Start:{" "}
-                  <span className="font-normal">{project.startDate}</span>
-                </p>
-                <p className="[font-family:'Jost',Helvetica] font-semibold text-white">
-                  Construction End:{" "}
-                  <span className="font-normal">{project.endDate}</span>
-                </p>
-                <p className="[font-family:'Jost',Helvetica] font-semibold text-white">
-                  Total Work Days:{" "}
-                  <span className="font-normal">
-                    {project.completedDays}/{project.totalDays} days
-                  </span>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {selectedProject && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[999] p-4">
-          <Card className="bg-[#ff9d00] border-none rounded-[20px] shadow-[0px_8px_24px_#00000040] max-w-[600px] w-full">
-            <CardContent className="p-8">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="[font-family:'Jost',Helvetica] font-bold text-white text-2xl">
-                  {selectedProject.name}
-                </h2>
-                <button
-                  onClick={() => setSelectedProject(null)}
-                  className="text-white text-2xl hover:text-gray-200"
-                >
-                  ×
-                </button>
-              </div>
-
-              <div className="bg-green-400 rounded-lg p-4 mb-6">
-                <p className="[font-family:'Jost',Helvetica] font-semibold text-white text-center">
-                  Status: Ongoing
-                </p>
-              </div>
-
-              <h3 className="[font-family:'Jost',Helvetica] font-bold text-black text-lg mb-4">
-                Workers
+      {/* =======================
+          RIGHT SIDE PANEL (absolute, animated)
+      ======================= */}
+      <div className="relative">
+        <div
+          className={`
+            w-[350px]
+            absolute right-0 top-0
+            transform transition-all duration-500 ease-in-out
+            ${panelVisible ? "opacity-100 translate-x-0" : "opacity-0 translate-x-10 pointer-events-none"}
+          `}
+        >
+          {selectedWorkers && (
+            <div className="bg-white rounded-2xl shadow-xl p-5 space-y-4">
+              <h3 className="text-lg font-bold text-center">
+                {selectedWorkers.name}
               </h3>
 
-              <div className="space-y-3">
-                {[
-                  { name: "Daniel Casutoy", role: "Steelman" },
-                  { name: "Marvin San Diego", role: "Mason" },
-                  { name: "Chrislyn Devers", role: "Taga kape" },
-                  { name: "Jann Talania", role: "Carpenter" },
-                  { name: "Daniel Casutoy", role: "Steelman" },
-                  { name: "Marvin San Diego", role: "Mason" },
-                  { name: "Chrislyn Devers", role: "Taga kape" },
-                  { name: "Jann Talania", role: "Carpenter" },
-                ].map((worker, idx) => (
-                  <div
-                    key={idx}
-                    className="flex justify-between [font-family:'Jost',Helvetica]"
-                  >
-                    <span className="font-semibold text-black">
-                      {worker.name}
-                    </span>
-                    <span className="font-normal text-black">
-                      {worker.role}
-                    </span>
-                  </div>
-                ))}
+              <div className="bg-green-300 text-center py-2 rounded-full font-semibold">
+                Status: Ongoing
               </div>
 
-              <Button
-                onClick={() => setSelectedProject(null)}
-                className="w-full mt-6 bg-red-400 hover:bg-red-500 text-white rounded-lg h-[44px] [font-family:'Jost',Helvetica] font-semibold text-base"
+              <div className="bg-gray-100 rounded-xl p-4">
+                <div className="flex justify-between font-semibold mb-2">
+                  <span>Workers</span>
+                  <span>Role</span>
+                </div>
+
+                <div className="space-y-1 text-sm">
+                  {selectedWorkers.workers?.map((worker, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between border-b pb-1"
+                    >
+                      <span>{worker.name}</span>
+                      <span>{worker.role}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <button
+                onClick={() => setSelectedWorkers(null)}
+                className="w-full bg-red-400 text-white py-2 rounded-full hover:bg-red-500"
               >
                 Back
-              </Button>
-            </CardContent>
-          </Card>
+              </button>
+            </div>
+          )}
         </div>
-      )}
+      </div>
     </div>
   );
 };
