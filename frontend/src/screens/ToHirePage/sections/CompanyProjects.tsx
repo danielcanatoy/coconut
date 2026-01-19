@@ -110,7 +110,7 @@ export const CompanyProjects = (): JSX.Element => {
                 key={project.id}
                 className={`
                   bg-[#FFA800] rounded-2xl shadow-md
-                  transition-transform duration-200
+                  transition-transform duration-200 border-none
                   ${isOpen ? "scale-100" : "hover:scale-[1.02]"}
                 `}
               >
@@ -202,7 +202,7 @@ export const CompanyProjects = (): JSX.Element => {
               className="
                 bg-[#6EFF7A] rounded-2xl shadow-md
                 transition-transform duration-200
-                hover:scale-[1.02]
+                hover:scale-[1.02] border-none
               "
             >
               <CardContent className="p-5 space-y-3 text-black">

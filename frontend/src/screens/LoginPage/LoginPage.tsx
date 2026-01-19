@@ -123,13 +123,14 @@ export const LoginPage = (): JSX.Element => {
           className="w-full h-[44px] bg-[#e8e8e8] rounded-full px-4 [font-family:'Jost',Helvetica] font-normal text-black text-base border-0 placeholder:text-[#00000066] placeholder:italic focus-visible:ring-0 focus-visible:ring-offset-0"
         />
 
-        <div className="text-right">
-          <button className="[font-family:'Jost',Helvetica] font-normal italic text-black text-sm tracking-[0] leading-[normal] underline hover:no-underline transition-all duration-200 ease-out
-                  hover:-translate-y-[1px]
-                active:scale-[0.98]">
-            Forgot your Password?
-          </button>
-        </div>
+ <div className="flex justify-center">
+  <button
+    className="[font-family:'Jost',Helvetica] font-normal italic text-black text-sm tracking-[0] leading-[normal] underline hover:no-underline transition-all duration-200 ease-out hover: active:scale-[0.98]"
+  >
+    Forgot your Password?
+  </button>
+</div>
+
 
             
         <div className="flex justify-center pt-3">

@@ -1,77 +1,87 @@
 import { Card, CardContent } from "../../../../components/ui/card";
+import { useState } from "react";
 
-const benefitItems = [
+const benefitItemsData = [
   {
     title: "Manpower\nShortages",
-    isActive: true,
+    description:
+      "We help you manage manpower shortages efficiently with our system.",
+    image: "/vector.png",
   },
   {
     title: "Job\nOpportunities",
-    isActive: false,
+    description:
+      "Workers can discover new job opportunities tailored to their skills.",
+    image: "/vector.png",
   },
   {
     title: "Efficient\nHiring",
-    isActive: false,
+    description: "Companies can hire qualified workers faster and smarter.",
+    image: "/vector.png",
   },
 ];
 
 export const BenefitsSection = (): JSX.Element => {
+  const [activeIndex, setActiveIndex] = useState(0);
+
   return (
-    <section className="relative w-full py-16">
+    <section className="relative w-full py-16 scale-[95%] origin-top">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          {/* Left Buttons */}
           <div className="flex flex-col">
             <div className="mb-8">
               <p className="[font-family:'Jost',Helvetica] font-medium text-black text-xl text-center lg:text-left tracking-[0] leading-[normal] mb-2">
                 Why choose us?
               </p>
-              <h2 className="[font-family:'Jost',Helvetica] font-medium text-[#ff9d00] text-[64px] text-center lg:text-left tracking-[0] leading-[normal]">
+              <h2 className="[font-family:'Jost',Helvetica] font-medium text-[#ff9d00] text-[61px] text-center lg:text-left tracking-[0] leading-[normal]">
                 BENEFITS
               </h2>
             </div>
 
             <div className="flex flex-col gap-4">
-              {benefitItems.map((item, index) => (
-                <Card
+              {benefitItemsData.map((item, index) => (
+                <button
                   key={index}
-                  className={`relative border border-solid border-[#cdb7b7] rounded-none ${
-                    item.isActive ? "border-l-[6px] border-l-[#ff9d00]" : ""
+                  onClick={() => setActiveIndex(index)}
+                  className={`relative text-left p-4 rounded-lg border border-solid border-[#cdb7b7] transition-all duration-200 flex items-center gap-2 ${
+                    activeIndex === index
+                      ? "border-l-[6px] border-l-[#ff9d00] bg-[#fff7eb] shadow-md"
+                      : "hover:border-l-[6px] hover:border-l-[#ff9d00] hover:bg-[#fff7eb]"
                   }`}
                 >
-                  <CardContent className="p-6 flex items-center gap-2">
-                    {item.isActive && (
-                      <img
-                        className="w-[22px] h-[27px]"
-                        alt="Polygon"
-                        src="/polygon-1.svg"
-                      />
-                    )}
-                    <h3 className="[font-family:'Jost',Helvetica] font-medium text-black text-[40px] tracking-[0] leading-[normal] whitespace-pre-line">
-                      {item.title}
-                    </h3>
-                  </CardContent>
-                </Card>
+                  {activeIndex === index && (
+                    <img
+                      className="w-[22px] h-[27px]"
+                      alt="Polygon"
+                      src="/polygon-1.svg"
+                    />
+                  )}
+                  <h3 className="[font-family:'Jost',Helvetica] font-medium text-black text-[30px] tracking-[0] leading-[normal] whitespace-pre-line">
+                    {item.title}
+                  </h3>
+                </button>
               ))}
             </div>
           </div>
 
-          <div className="relative flex flex-col items-center lg:items-end">
-            <div className="relative w-full max-w-[764px]">
+          {/* Right Image and Card */}
+          <div className="flex flex-col items-center lg:items-end justify-center">
+            <div className="relative w-full max-w-[725px] flex flex-col items-center lg:items-end">
               <img
-                className="w-full h-auto object-cover"
-                alt="Vector"
-                src="/vector.png"
+                className="w-full h-auto object-cover mt-40"
+                alt={benefitItemsData[activeIndex].title}
+                src={benefitItemsData[activeIndex].image}
               />
-              <Card className="absolute bottom-0 left-1/2 transform -translate-x-1/2 lg:left-auto lg:right-0 lg:translate-x-0 w-full max-w-[376px] bg-[#ff9d00] border-none rounded-none">
-                <CardContent className="p-4">
-                  <p className="[font-family:'Jost',Helvetica] font-medium text-black text-2xl text-center tracking-[0] leading-[normal]">
-                    Lorem ipsum dolor sit amet consectetur adipiscing elit.
-                    Dolor sit amet consectetur adipiscing elit quisque faucibus.
+
+              <Card className="absolute bottom-0 left-1/2 transform -translate-x-1/2 lg:left-auto lg:right-0 lg:translate-x-0 w-full max-w-[356px] bg-[#ff9d00] border-none rounded-none p-4">
+                <CardContent>
+                  <p className="[font-family:'Jost',Helvetica] font-medium text-black text-[1.9rem] text-center tracking-[0] leading-[normal]">
+                    {benefitItemsData[activeIndex].description}
                   </p>
                 </CardContent>
               </Card>
             </div>
-            <div className="hidden lg:block absolute top-0 right-0 w-3.5 h-[352px] bg-[#ff9d00]" />
           </div>
         </div>
       </div>

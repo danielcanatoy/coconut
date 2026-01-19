@@ -34,11 +34,7 @@ export const HeroSection = (): JSX.Element => {
 
       
 
-      <img
-        className="absolute top-64 left-[1478px] w-3.5 h-[352px]"
-        alt="Rectangle"
-        src="/rectangle-39.svg"
-      />
+      
     </section>
   );
 };
