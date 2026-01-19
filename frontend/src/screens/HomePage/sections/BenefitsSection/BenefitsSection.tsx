@@ -5,7 +5,7 @@ const benefitItemsData = [
   {
     title: "Manpower\nShortages",
     description:
-      "We help you manage manpower shortages efficiently with our system.",
+      "We help you manage manpower shortages efficientlsy with our system.",
     image: "/vector.png",
   },
   {
