@@ -17,7 +17,6 @@ interface WorkerFormData {
   canReadPlans: boolean;
   canWorkOvertime: boolean;
   experience: string;
-  certifications: File | null;
   availability: string;
   preferredWages: string;
   workLocation: string;
@@ -58,7 +57,6 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
     canReadPlans: false,
     canWorkOvertime: false,
     experience: "",
-    certifications: null,
     availability: "",
     preferredWages: "",
     workLocation: "",
