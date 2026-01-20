@@ -144,7 +144,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
   
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-[1280px] mx-auto px-6">
       <div className="flex items-center justify-between">
         <h1 className="[font-family:'Jost',Helvetica] font-bold text-black text-4xl">
           Edit Profile
@@ -164,8 +164,8 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
   <label className="cursor-pointer">
     <div
       className="
-        w-[120px]
-        h-[120px]
+        w-32
+        h-32
         rounded-full
         bg-gray-100
         flex
@@ -198,7 +198,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
 </div>
 
           
-          <div className="grid grid-cols-3 gap-6 mb-8">
+          <div className="grid grid-cols-3 gap-6 mb-8 max-w-[900px]">
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
                 First Name
@@ -245,7 +245,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-2 gap-6 mb-8 max-w-[900px]">
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
                 Date of Birth
@@ -281,7 +281,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
             Contact Information
           </h3>
 
-          <div className="grid grid-cols-2 gap-6 mb-8">
+         <div className="grid grid-cols-2 gap-6 mb-8 max-w-[900px]">
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
                 Email Address
@@ -323,7 +323,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 Select Skills
               </label>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-3 max-w-[600px]">
                 {skillOptions.map((skill) => (
                   <label key={skill} className="flex items-center gap-2 text-sm">
                     <input
@@ -375,7 +375,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
 
 
 
-          <div className="grid grid-cols-2 gap-6 mb-8">
+          <div className="grid grid-cols-2 gap-6 mb-8 max-w-[900px]">
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
                 Skills
@@ -498,7 +498,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
             </div>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end max-w-[900px]">
             <Button
               onClick={handleSave}
               className="bg-green-500 hover:bg-green-600 text-white rounded-lg h-[44px] px-8 [font-family:'Jost',Helvetica] font-semibold text-base"

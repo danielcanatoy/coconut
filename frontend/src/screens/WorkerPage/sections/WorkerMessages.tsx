@@ -79,8 +79,8 @@ export const WorkerMessages = (): JSX.Element => {
   };
 
   return (
-    <div className="grid grid-cols-4 gap-6 h-[calc(100vh-120px)]">
-      <div className="col-span-1">
+    <div className="grid grid-cols-4 gap-6 max-w-[1280px] mx-auto h-full">
+    <div className="col-span-1 max-w-[300px]">
         <h2 className="[font-family:'Jost',Helvetica] font-normal text-black text-1 bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
           Conversations
         </h2>
@@ -113,7 +113,7 @@ export const WorkerMessages = (): JSX.Element => {
         </div>
       </div>
 
-      <div className="col-span-3 flex flex-col bg-white rounded-[20px] shadow-[0px_4px_12px_#00000020]">
+      <div className="col-span-3 flex flex-col bg-white rounded-[20px] shadow-[0px_4px_12px_#00000020] max-w-[900px]">
         <div className="border-b border-gray-200 p-6">
           <div className="flex items-center justify-between">
             <div>
@@ -143,7 +143,7 @@ export const WorkerMessages = (): JSX.Element => {
               }`}
             >
               <div
-                className={`max-w-xs p-4 rounded-lg ${
+                className={`max-w-[70%] md:max-w-xs p-4 rounded-lg ${
                   msg.isWorkerMessage ? "bg-[#ff9d00]" : "bg-gray-200"
                 }`}
               >

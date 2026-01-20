@@ -3,7 +3,8 @@ import Time from "../../../components/ui/time";
 
 export const WorkerHome = (): JSX.Element => {
   return (
-    <div className="space-y-8">
+    <div className="mx-auto max-w-[1280px] w-full px-6 space-y-8">
+
       <div className="flex items-center justify-between">
         <h1 className="[font-family:'Jost',Helvetica] font-normal text-black text-1 bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
         Hello User!
