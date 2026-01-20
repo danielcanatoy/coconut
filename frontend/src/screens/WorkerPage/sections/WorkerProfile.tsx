@@ -267,13 +267,13 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
           </div>
 
           <h3 className="[font-family:'Jost',Helvetica] font-bold text-black text-lg mb-4">
-            Contact Information
+            Contact Informations
           </h3>
 
           <div className="grid grid-cols-2 gap-6 mb-8">
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
-                Email Address
+                Email Addresses
               </label>
               <Input
                 type="email"
