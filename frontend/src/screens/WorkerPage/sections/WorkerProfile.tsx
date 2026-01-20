@@ -17,6 +17,7 @@ interface WorkerFormData {
   canReadPlans: boolean;
   canWorkOvertime: boolean;
   experience: string;
+  certifications: string;
   availability: string;
   preferredWages: string;
   workLocation: string;
@@ -57,6 +58,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
     canReadPlans: false,
     canWorkOvertime: false,
     experience: "",
+    certifications: "",
     availability: "",
     preferredWages: "",
     workLocation: "",
@@ -358,6 +360,19 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                     className={`w-full h-[44px] text-base transition-all ${inputClass}`}
                   />
                 </div>
+                <div>
+    <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
+      Certifications
+    </label>
+    <Input
+      type="text"
+      disabled={!isEditing}
+      value={formData.certifications as string || ""}
+      onChange={(e) => handleChange("certifications", e.target.value)}
+      className={`w-full h-[44px] text-base transition-all ${inputClass}`}
+    />
+  </div>
+
               </div>
             </div>
 
