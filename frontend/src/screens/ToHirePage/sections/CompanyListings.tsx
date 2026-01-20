@@ -118,11 +118,6 @@ export const CompanyListings = (): JSX.Element => {
     }
   };
 
-  const baseButtonStyle = "h-auto !px-8 !py-3 !text-2xl !font-normal rounded-full inline-flex items-center justify-center leading-none [font-family:'Jost',Helvetica] shadow-[0px_4px_8px_rgba(0,0,0,0.25)] transition-transform hover:scale-105";
-
-  const activePill = "!bg-[#FF9D00] !text-black hover:!bg-[#ff8f00] border border-transparent";
-  const inactivePill = "!bg-white !text-black hover:!bg-gray-100 border border-gray-200";
-
   return (
     <div className="space-y-8">
       <div className="flex justify-end">
@@ -132,18 +127,22 @@ export const CompanyListings = (): JSX.Element => {
       </div>
 
       <div className="flex justify-end gap-4">
-        <Button 
+        <button
           onClick={() => setShowCreateForm(false)}
-          className={`${baseButtonStyle} ${!showCreateForm ? activePill : inactivePill}`}
+          className={`[font-family:'Jost',Helvetica] font-normal text-black text-lg px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)] transition-all cursor-pointer hover:shadow-[0px_6px_12px_rgba(0,0,0,0.3)] ${
+            !showCreateForm ? 'bg-[#FF9D00]' : 'bg-white'
+          }`}
         >
           Your Listings
-        </Button>
-        <Button 
+        </button>
+        <button
           onClick={() => setShowCreateForm(true)}
-          className={`${baseButtonStyle} ${showCreateForm ? activePill : inactivePill}`}
+          className={`[font-family:'Jost',Helvetica] font-normal text-black text-lg px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)] transition-all cursor-pointer hover:shadow-[0px_6px_12px_rgba(0,0,0,0.3)] ${
+            showCreateForm ? 'bg-[#FF9D00]' : 'bg-white'
+          }`}
         >
           Create New Listing
-        </Button>
+        </button>
       </div>
 
       {!showCreateForm ? (

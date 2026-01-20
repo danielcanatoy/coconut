@@ -48,9 +48,9 @@ export const CompanyWorkers = (): JSX.Element => {
 
       <div className="w-full">
         <div>
-          <h2 className="[font-family:'Jost',Helvetica] font-normal text-black text-2xl bg-[#FF9D00] px-8 py-3 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
+          <h1 className="[font-family:'Jost',Helvetica] font-normal text-black text-lg bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
             Company Workers
-          </h2>
+          </h1>
         </div>
 
         <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020] mt-4 w-full">

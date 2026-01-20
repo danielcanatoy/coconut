@@ -103,7 +103,6 @@ export const CompanyProjects = (): JSX.Element => {
 
   return (
     <div className="relative flex flex-col gap-6">
-      
       <div className="flex items-center justify-end w-full">
         <span className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 [font-family:'Jost',Helvetica] font-medium text-black text-lg tracking-wide">
           {currentTime}
@@ -111,15 +110,12 @@ export const CompanyProjects = (): JSX.Element => {
       </div>
 
       <div className="flex gap-6 relative">
-        
         <div className="flex-1 space-y-8">
-          
+          {/* Ongoing Projects Section */}
           <div className="space-y-4">
-            <div>
-              <h2 className="[font-family:'Jost',Helvetica] font-normal text-black text-2xl bg-[#FF9D00] px-8 py-3 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
-                Ongoing Projects
-              </h2>
-            </div>
+            <h1 className="[font-family:'Jost',Helvetica] font-normal text-black text-lg bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
+              Ongoing Projects
+            </h1>
 
             <div className="grid grid-cols-2 gap-6 items-start">
               {ongoingProjects.map((project) => {
@@ -210,12 +206,11 @@ export const CompanyProjects = (): JSX.Element => {
             </div>
           </div>
 
+          {/* Completed Projects Section */}
           <div className="space-y-4">
-            <div>
-              <h2 className="[font-family:'Jost',Helvetica] font-normal text-black text-2xl bg-[#FF9D00] px-8 py-3 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
-                Completed Projects
-              </h2>
-            </div>
+            <h1 className="[font-family:'Jost',Helvetica] font-normal text-black text-lg bg-[#6EFF7A] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
+              Completed Projects
+            </h1>
 
             <div className="grid grid-cols-2 gap-6 items-start">
               {completedProjects.map((project) => (
