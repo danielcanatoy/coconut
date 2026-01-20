@@ -159,7 +159,9 @@ export const CompanyListings = (): JSX.Element => {
         </Button>
         <Button
           onClick={() => setShowCreateForm(true)}
-          className={`${baseButtonStyle} ${showCreateForm ? activePill : inactivePill}`}
+          className={`[font-family:'Jost',Helvetica] font-normal text-black text-lg px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)] transition-all cursor-pointer hover:shadow-[0px_6px_12px_rgba(0,0,0,0.3)] ${
+            showCreateForm ? "bg-[#FF9D00]" : "bg-white"
+          }`}
         >
           Create New Listing
         </Button>
