@@ -46,58 +46,52 @@ export const CompanyWorkers = (): JSX.Element => {
         </span>
       </div>
 
-      <div className="flex gap-6 relative">
-        
-        <div className="w-full space-y-4">
-          
-          <div>
-            <h2 className="[font-family:'Jost',Helvetica] font-normal text-black text-2xl bg-[#FF9D00] px-8 py-3 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
-              Company Workers
-            </h2>
-          </div>
-
-          <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
-            <CardContent className="p-6">
-              <div className="overflow-x-auto">
-                <table className="w-full [font-family:'Jost',Helvetica]">
-                  <thead>
-                    <tr className="border-b-2 border-gray-300">
-                      <th className="text-left py-3 px-4 font-semibold text-black text-base w-1/3">
-                        Workers
-                      </th>
-                      <th className="text-left py-3 px-4 font-semibold text-black text-base w-1/3">
-                        Role
-                      </th>
-                      <th className="text-left py-3 px-4 font-semibold text-black text-base w-1/3">
-                        Project
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {currentWorkers.map((worker) => (
-                      <tr
-                        key={worker.id}
-                        className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                      >
-                        <td className="py-3 px-4 font-normal text-black text-sm">
-                          {worker.name}
-                        </td>
-                        <td className="py-3 px-4 font-normal text-black text-sm">
-                          {worker.role}
-                        </td>
-                        <td className="py-3 px-4 font-normal text-black text-sm">
-                          {worker.project}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </CardContent>
-          </Card>
+      <div className="w-full">
+        <div>
+          <h2 className="[font-family:'Jost',Helvetica] font-normal text-black text-2xl bg-[#FF9D00] px-8 py-3 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
+            Company Workers
+          </h2>
         </div>
 
-        <div className="w-[350px] hidden lg:block"></div>
+        <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020] mt-4 w-full">
+          <CardContent className="p-6">
+            <div className="overflow-x-auto">
+              <table className="w-full min-w-[600px] [font-family:'Jost',Helvetica]">
+                <thead>
+                  <tr className="border-b-2 border-gray-300">
+                    <th className="text-left py-3 px-4 font-semibold text-black text-base">
+                      Workers
+                    </th>
+                    <th className="text-left py-3 px-4 font-semibold text-black text-base">
+                      Role
+                    </th>
+                    <th className="text-left py-3 px-4 font-semibold text-black text-base">
+                      Project
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentWorkers.map((worker) => (
+                    <tr
+                      key={worker.id}
+                      className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                    >
+                      <td className="py-3 px-4 font-normal text-black text-sm">
+                        {worker.name}
+                      </td>
+                      <td className="py-3 px-4 font-normal text-black text-sm">
+                        {worker.role}
+                      </td>
+                      <td className="py-3 px-4 font-normal text-black text-sm">
+                        {worker.project}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
