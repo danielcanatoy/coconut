@@ -1,16 +1,35 @@
 import { Card, CardContent } from "../../../components/ui/card";
+import { useState, useEffect } from "react";
 
 export const CompanyHome = (): JSX.Element => {
+  const [currentTime, setCurrentTime] = useState<string>("");
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setCurrentTime(
+        now.toLocaleTimeString("en-US", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit",
+          hour12: true,
+        })
+      );
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <div className="bg-[#ff9d00] rounded-full px-6 py-2">
-          <p className="[font-family:'Jost',Helvetica] font-bold text-black text-lg">
-            Hello User!
-          </p>
-        </div>
-        <span className="[font-family:'Jost',Helvetica] font-normal text-black text-base">
-          08:34:31 PM
+        <h1 className="[font-family:'Jost',Helvetica] font-normal text-black text-lg bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
+          Hello User!
+        </h1>
+
+        <span className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 [font-family:'Jost',Helvetica] font-medium text-black text-lg tracking-wide">
+          {currentTime}
         </span>
       </div>
 

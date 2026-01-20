@@ -38,62 +38,67 @@ export const CompanyWorkers = (): JSX.Element => {
   }, []);
 
   return (
-    <div className="space-y-6"> {/* Reduced space between elements */}
+    <div className="relative flex flex-col gap-6">
       
-      {/* HEADER: REAL-TIME CLOCK */}
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end w-full">
         <span className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 [font-family:'Jost',Helvetica] font-medium text-black text-lg tracking-wide">
           {currentTime}
         </span>
       </div>
 
-      {/* TITLE WITH ORANGE BACKGROUND */}
-      <div>
-        <h2 className="bg-[#ff9d00] inline-block rounded-full px-8 py-3 [font-family:'Jost',Helvetica] font-bold text-black text-3xl mb-4 shadow-sm"> {/* Reduced mb-6 to mb-4 */}
-          Company Workers
-        </h2>
-      </div>
-
-      {/* WORKERS TABLE CARD */}
-      <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
-        <CardContent className="p-6">
-          <div className="overflow-x-auto">
-            <table className="w-full [font-family:'Jost',Helvetica]">
-              <thead>
-                <tr className="border-b-2 border-gray-300">
-                  <th className="text-left py-3 px-4 font-semibold text-black text-base w-1/3">
-                    Workers
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-black text-base w-1/3">
-                    Role
-                  </th>
-                  <th className="text-left py-3 px-4 font-semibold text-black text-base w-1/3">
-                    Project
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {currentWorkers.map((worker) => (
-                  <tr
-                    key={worker.id}
-                    className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
-                  >
-                    <td className="py-3 px-4 font-normal text-black text-sm">
-                      {worker.name}
-                    </td>
-                    <td className="py-3 px-4 font-normal text-black text-sm">
-                      {worker.role}
-                    </td>
-                    <td className="py-3 px-4 font-normal text-black text-sm">
-                      {worker.project}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      <div className="flex gap-6 relative">
+        
+        <div className="w-full space-y-4">
+          
+          <div>
+            <h2 className="[font-family:'Jost',Helvetica] font-normal text-black text-2xl bg-[#FF9D00] px-8 py-3 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
+              Company Workers
+            </h2>
           </div>
-        </CardContent>
-      </Card>
+
+          <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
+            <CardContent className="p-6">
+              <div className="overflow-x-auto">
+                <table className="w-full [font-family:'Jost',Helvetica]">
+                  <thead>
+                    <tr className="border-b-2 border-gray-300">
+                      <th className="text-left py-3 px-4 font-semibold text-black text-base w-1/3">
+                        Workers
+                      </th>
+                      <th className="text-left py-3 px-4 font-semibold text-black text-base w-1/3">
+                        Role
+                      </th>
+                      <th className="text-left py-3 px-4 font-semibold text-black text-base w-1/3">
+                        Project
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentWorkers.map((worker) => (
+                      <tr
+                        key={worker.id}
+                        className="border-b border-gray-200 hover:bg-gray-50 transition-colors"
+                      >
+                        <td className="py-3 px-4 font-normal text-black text-sm">
+                          {worker.name}
+                        </td>
+                        <td className="py-3 px-4 font-normal text-black text-sm">
+                          {worker.role}
+                        </td>
+                        <td className="py-3 px-4 font-normal text-black text-sm">
+                          {worker.project}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="w-[350px] hidden lg:block"></div>
+      </div>
     </div>
   );
 };

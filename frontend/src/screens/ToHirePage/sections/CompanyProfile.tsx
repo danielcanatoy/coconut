@@ -18,12 +18,24 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
     contactNumber: "+63 123 456 7890",
     companyEmail: "company@example.com",
   });
+  const [profileImage, setProfileImage] = useState<string | null>(null);
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }));
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleAction = () => {
@@ -35,14 +47,12 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
     }
   };
 
-  // Added 'px-3' (padding-left/right) to view mode for spacing
   const inputClass = isEditing
     ? "bg-white border border-gray-300 shadow-sm focus:border-[#ff9d00] focus:ring-1 focus:ring-[#ff9d00] px-4" 
     : "bg-white border-b border-gray-300 rounded-none px-2 font-medium text-black shadow-none disabled:opacity-100 disabled:cursor-text"; 
 
   return (
     <div className="space-y-8 animate-in fade-in zoom-in duration-300">
-      {/* HEADER */}
       <div className="flex items-center justify-between">
         <h1 className="[font-family:'Jost',Helvetica] font-bold text-black text-4xl">
           Company Profile
@@ -55,15 +65,12 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
         </Button>
       </div>
 
-      {/* MAIN CARD */}
       <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
         <CardContent className="p-10">
           <div className="grid grid-cols-3 gap-12 mb-8">
             
-            {/* LEFT COLUMN: FORM FIELDS */}
             <div className="col-span-2 space-y-6">
               
-              {/* Company Name */}
               <div>
                 <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
                   Company Name
@@ -77,7 +84,6 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
                 />
               </div>
 
-              {/* Row: Business Type & Reg Number */}
               <div className="grid grid-cols-2 gap-8">
                 <div>
                   <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
@@ -105,7 +111,6 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
                 </div>
               </div>
 
-              {/* Year Est */}
               <div>
                 <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
                   Year Established
@@ -119,7 +124,6 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
                 />
               </div>
 
-              {/* Row: Address & Contact */}
               <div className="grid grid-cols-2 gap-8">
                 <div>
                   <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
@@ -147,7 +151,6 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
                 </div>
               </div>
 
-              {/* Email */}
               <div>
                 <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
                   Company Email Address
@@ -162,21 +165,41 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
               </div>
             </div>
 
-            {/* RIGHT COLUMN: PROFILE PICTURE */}
             <div className="flex flex-col items-center justify-start pt-2">
-              <div className="w-48 h-48 bg-black rounded-full mb-6 shadow-xl flex items-center justify-center overflow-hidden border-4 border-gray-50 ring-1 ring-gray-200">
-                 <span className="text-white text-xs opacity-50">Logo</span>
+              <div className="w-48 h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full shadow-xl flex items-center justify-center overflow-hidden border-4 border-gray-50 ring-2 ring-gray-200 hover:ring-[#ff9d00] transition-all duration-300">
+                
+                {profileImage ? (
+                  <img 
+                    src={profileImage} 
+                    alt="Company Logo" 
+                    className="w-full h-full object-cover rounded-full transition-transform duration-200"
+                  />
+                ) : (
+                  <div className="text-center">
+                    <div className="w-20 h-20 bg-[#ff9d00] rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
+                      <span className="text-white text-xl font-bold">L</span>
+                    </div>
+                    <span className="text-gray-500 text-xs font-medium block">Company Logo</span>
+                  </div>
+                )}
               </div>
               
               {isEditing && (
-                <Button className="bg-white hover:bg-gray-50 text-black border border-gray-300 rounded-lg h-[44px] px-6 [font-family:'Jost',Helvetica] font-semibold text-sm shadow-sm transition-transform hover:scale-105">
-                  Change Profile Picture
-                </Button>
+                <label className="mt-6 cursor-pointer w-full flex justify-center">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                  <div className="bg-white hover:bg-gray-50 text-black border border-gray-300 rounded-lg h-[44px] px-8 [font-family:'Jost',Helvetica] font-semibold text-sm shadow-sm transition-transform hover:scale-105 flex items-center justify-center">
+                    Change Profile Picture
+                  </div>
+                </label>
               )}
             </div>
           </div>
 
-          {/* ACTION BUTTON */}
           <div className="flex justify-end pt-6 border-t border-gray-100 mt-4">
             <Button
               onClick={handleAction}
