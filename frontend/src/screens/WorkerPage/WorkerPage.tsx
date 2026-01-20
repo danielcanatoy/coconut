@@ -4,7 +4,7 @@ import { WorkerHome } from "./sections/WorkerHome";
 import { WorkerProjects } from "./sections/WorkerProjects";
 import { WorkerMessages } from "./sections/WorkerMessages";
 import { WorkerProfile } from "./sections/WorkerProfile";
-import { WorkerListings } from "./sections/WorkerListings";
+import { WorkerListings } from "./sections/WorkerListing";
 
 import { useNavigate } from "react-router-dom";
 
@@ -102,17 +102,17 @@ export const WorkerPage = (): JSX.Element => {
 
         {/* Main Content */}
         <main className="flex-1 overflow-y-auto p-8">
-  {showProfileEdit ? (
-    <WorkerProfile onClose={() => setShowProfileEdit(false)} />
-  ) : (
-    <>
-      {activeSection === "home" && <WorkerHome />}
-      {activeSection === "projects" && <WorkerProjects />}
-      {activeSection === "listings" && <WorkerListings />}
-      {activeSection === "messages" && <WorkerMessages />}
-    </>
-  )}
-</main>
+          {showProfileEdit ? (
+            <WorkerProfile onClose={() => setShowProfileEdit(false)} />
+          ) : (
+            <>
+              {activeSection === "home" && <WorkerHome />}
+              {activeSection === "projects" && <WorkerProjects />}
+              {activeSection === "listings" && <WorkerListings />}
+              {activeSection === "messages" && <WorkerMessages />}
+            </>
+          )}
+        </main>
       </div>
     </div>
   );
