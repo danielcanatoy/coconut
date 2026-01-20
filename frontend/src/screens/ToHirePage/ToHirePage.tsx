@@ -37,7 +37,7 @@ export const ToHirePage = (): JSX.Element => {
       />
 
       <div className="flex h-screen relative z-10">
-        <aside className="w-[200px] bg-[#ff9d00] shadow-[2px_0px_8px_#00000020] flex flex-col overflow-y-auto">
+        <aside className="w-[200px] bg-[#f5e6d3] shadow-[2px_0px_8px_#00000020] flex flex-col overflow-y-auto">
           <div className="p-6 space-y-4">
             <div className="text-center">
               <div className="w-24 h-24 bg-black rounded-full mx-auto mb-4" />
@@ -52,10 +52,10 @@ export const ToHirePage = (): JSX.Element => {
             <div className="space-y-3 mt-8">
               <button
                 onClick={() => setActiveSection("home")}
-                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-base transition-colors ${
+                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-lg transition-colors ${
                   activeSection === "home"
-                    ? "bg-white text-[#ff9d00]"
-                    : "bg-white text-black hover:bg-gray-100"
+                    ? "bg-[#ff9d00] text-black"
+                    : "bg-white text-black hover:bg-[#ffce80]"
                 }`}
               >
                 Home
@@ -63,10 +63,10 @@ export const ToHirePage = (): JSX.Element => {
 
               <button
                 onClick={() => setActiveSection("projects")}
-                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-base transition-colors ${
+                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-lg transition-colors ${
                   activeSection === "projects"
-                    ? "bg-white text-[#ff9d00]"
-                    : "bg-white text-black hover:bg-gray-100"
+                    ? "bg-[#ff9d00] text-black"
+                    : "bg-white text-black hover:bg-[#ffce80]"
                 }`}
               >
                 Projects
@@ -74,10 +74,10 @@ export const ToHirePage = (): JSX.Element => {
 
               <button
                 onClick={() => setActiveSection("listings")}
-                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-base transition-colors ${
+                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-lg transition-colors ${
                   activeSection === "listings"
-                    ? "bg-white text-[#ff9d00]"
-                    : "bg-white text-black hover:bg-gray-100"
+                    ? "bg-[#ff9d00] text-black"
+                    : "bg-white text-black hover:bg-[#ffce80]"
                 }`}
               >
                 Listings
@@ -85,10 +85,10 @@ export const ToHirePage = (): JSX.Element => {
 
               <button
                 onClick={() => setActiveSection("workers")}
-                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-base transition-colors ${
+                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-lg transition-colors ${
                   activeSection === "workers"
-                    ? "bg-white text-[#ff9d00]"
-                    : "bg-white text-black hover:bg-gray-100"
+                    ? "bg-[#ff9d00] text-black"
+                    : "bg-white text-black hover:bg-[#ffce80]"
                 }`}
               >
                 Workers
@@ -96,10 +96,10 @@ export const ToHirePage = (): JSX.Element => {
 
               <button
                 onClick={() => setActiveSection("applicants")}
-                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-base transition-colors ${
+                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-lg transition-colors ${
                   activeSection === "applicants"
-                    ? "bg-white text-[#ff9d00]"
-                    : "bg-white text-black hover:bg-gray-100"
+                    ? "bg-[#ff9d00] text-black"
+                    : "bg-white text-black hover:bg-[#ffce80]"
                 }`}
               >
                 Applicants
@@ -107,10 +107,10 @@ export const ToHirePage = (): JSX.Element => {
 
               <button
                 onClick={() => setActiveSection("messages")}
-                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-base transition-colors ${
+                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-lg transition-colors ${
                   activeSection === "messages"
-                    ? "bg-white text-[#ff9d00]"
-                    : "bg-white text-black hover:bg-gray-100"
+                    ? "bg-[#ff9d00] text-black"
+                    : "bg-white text-black hover:bg-[#ffce80]"
                 }`}
               >
                 Messages

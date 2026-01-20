@@ -56,6 +56,8 @@ const applicants: Applicant[] = [
 
 export const CompanyApplicants = (): JSX.Element => {
   const [currentTime, setCurrentTime] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<'approved' | 'rejected'>('approved');
+  const [panelVisible, setPanelVisible] = useState(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -74,26 +76,41 @@ export const CompanyApplicants = (): JSX.Element => {
     return () => clearInterval(intervalId);
   }, []);
 
-  return (
-    <div className="relative flex flex-col gap-6">
-      <div className="flex items-center justify-end w-full">
-        <span className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 [font-family:'Jost',Helvetica] font-medium text-black text-lg tracking-wide">
-          {currentTime}
-        </span>
-      </div>
+  const pendingApplicants = applicants.filter(a => a.status === "pending");
+  const approvedWorkers = applicants.filter(a => a.status === "approved");
+  const rejectedWorkers = applicants.filter(a => a.status === "rejected");
+  const currentWorkers = selectedStatus === 'approved' ? approvedWorkers : rejectedWorkers;
 
-      <div className="flex gap-6 relative">
-        <div className="w-full space-y-4">
-          <div>
-            <h2 className="[font-family:'Jost',Helvetica] font-normal text-black text-2xl bg-[#FF9D00] px-8 py-3 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
+  return (
+    <>
+      <div className="relative flex flex-col gap-6">
+        <div className="flex items-center justify-end w-full">
+          <span className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 [font-family:'Jost',Helvetica] font-medium text-black text-lg tracking-wide">
+            {currentTime}
+          </span>
+        </div>
+
+        <div className="w-full">
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="[font-family:'Jost',Helvetica] font-normal text-black text-lg bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
               Job Applicants
-            </h2>
+            </h1>
+            <button
+              onClick={() => setPanelVisible(!panelVisible)}
+              className={`[font-family:'Jost',Helvetica] font-normal text-black text-lg px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)] transition-all cursor-pointer hover:shadow-[0px_6px_12px_rgba(0,0,0,0.3)] ${
+                panelVisible
+                  ? 'bg-[#FF9D00]'
+                  : 'bg-white'
+              }`}
+            >
+              Approval History
+            </button>
           </div>
 
-          <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
+          <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020] w-full">
             <CardContent className="p-6">
               <div className="space-y-3">
-                {applicants.map((applicant) => (
+                {pendingApplicants.map((applicant) => (
                   <div
                     key={applicant.id}
                     className="flex items-center justify-between p-4 border border-gray-200 rounded-xl hover:bg-gray-50 transition-colors shadow-sm"
@@ -113,39 +130,129 @@ export const CompanyApplicants = (): JSX.Element => {
                       </p>
                     </div>
 
-                    <div className="flex flex-col items-end gap-2">
-                      <span
-                        className={`px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase shadow-sm ${
-                          applicant.status === "pending"
-                            ? "bg-yellow-300 text-yellow-900"
-                            : applicant.status === "approved"
-                            ? "bg-green-500 text-white"
-                            : "bg-red-500 text-white"
-                        }`}
-                      >
-                        {applicant.status}
-                      </span>
-
-                      {applicant.status === "pending" && (
-                        <div className="flex gap-2 mt-1">
-                          <Button className="bg-green-600 hover:bg-green-700 text-white rounded-lg h-[32px] px-4 [font-family:'Jost',Helvetica] font-bold text-xs shadow-md transition-transform hover:scale-105">
-                            Approve
-                          </Button>
-                          <Button className="bg-red-500 hover:bg-red-600 text-white rounded-lg h-[32px] px-4 [font-family:'Jost',Helvetica] font-bold text-xs shadow-md transition-transform hover:scale-105">
-                            Reject
-                          </Button>
-                        </div>
-                      )}
+                    <div className="flex gap-2">
+                      <Button className="bg-green-600 hover:bg-green-700 text-white rounded-lg h-[32px] px-4 [font-family:'Jost',Helvetica] font-bold text-xs shadow-md transition-transform hover:scale-105">
+                        Approve
+                      </Button>
+                      <Button className="bg-red-500 hover:bg-red-600 text-white rounded-lg h-[32px] px-4 [font-family:'Jost',Helvetica] font-bold text-xs shadow-md transition-transform hover:scale-105">
+                        Reject
+                      </Button>
                     </div>
                   </div>
                 ))}
+                {pendingApplicants.length === 0 && (
+                  <div className="p-12 text-center text-gray-500 font-medium">
+                    No pending applicants
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
         </div>
-
-        <div className="w-[350px] hidden lg:block"></div>
       </div>
-    </div>
+
+      {/* CENTERED MODAL - GREEN/RED TAB BUTTONS */}
+      {panelVisible && (
+        <div 
+          className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4"
+          onClick={() => setPanelVisible(false)}
+        >
+          <div 
+            className="bg-white rounded-[20px] shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden animate-in zoom-in-95 duration-300"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Card className="border-none rounded-[20px] overflow-hidden h-full flex flex-col max-h-[700px]">
+              <div className="bg-[#FF9D00] p-6 flex items-center justify-between flex-shrink-0 shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
+                <h3 className="[font-family:'Jost',Helvetica] font-normal text-2xl text-black">
+                  Approval History
+                </h3>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setSelectedStatus('approved')}
+                    className={`px-6 py-2 rounded-full text-sm font-bold transition-all shadow-sm ${
+                      selectedStatus === 'approved'
+                        ? 'bg-green-500 text-white shadow-[0px_4px_8px_rgba(0,0,0,0.25)]'
+                        : 'bg-white/70 text-black hover:bg-green-500 hover:text-white hover:shadow-[0px_4px_8px_rgba(0,0,0,0.25)]'
+                    }`}
+                  >
+                    Approved ({approvedWorkers.length})
+                  </button>
+                  <button
+                    onClick={() => setSelectedStatus('rejected')}
+                    className={`px-6 py-2 rounded-full text-sm font-bold transition-all shadow-sm ${
+                      selectedStatus === 'rejected'
+                        ? 'bg-red-500 text-white shadow-[0px_4px_8px_rgba(0,0,0,0.25)]'
+                        : 'bg-white/70 text-black hover:bg-red-500 hover:text-white hover:shadow-[0px_4px_8px_rgba(0,0,0,0.25)]'
+                    }`}
+                  >
+                    Rejected ({rejectedWorkers.length})
+                  </button>
+                </div>
+              </div>
+              
+              <CardContent className="p-6 flex-1 overflow-y-auto">
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-[800px] [font-family:'Jost',Helvetica]">
+                    <thead>
+                      <tr className={`border-b-2 ${selectedStatus === 'approved' ? 'border-green-300' : 'border-red-300'}`}>
+                        <th className={`text-left py-3 px-4 font-semibold text-black text-base ${selectedStatus === 'approved' ? 'bg-green-50' : 'bg-red-50'}`}>
+                          Name
+                        </th>
+                        <th className={`text-left py-3 px-4 font-semibold text-black text-base ${selectedStatus === 'approved' ? 'bg-green-50' : 'bg-red-50'}`}>
+                          Position
+                        </th>
+                        <th className={`text-left py-3 px-4 font-semibold text-black text-base ${selectedStatus === 'approved' ? 'bg-green-50' : 'bg-red-50'}`}>
+                          Project
+                        </th>
+                        <th className={`text-left py-3 px-4 font-semibold text-black text-base ${selectedStatus === 'approved' ? 'bg-green-50' : 'bg-red-50'}`}>
+                          {selectedStatus === 'approved' ? 'Approved' : 'Rejected'} Date
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentWorkers.map((worker) => (
+                        <tr
+                          key={worker.id}
+                          className={`border-b ${selectedStatus === 'approved' ? 'border-green-200 hover:bg-green-50' : 'border-red-200 hover:bg-red-50'} transition-colors`}
+                        >
+                          <td className="py-3 px-4 font-normal text-black text-sm">
+                            {worker.name}
+                          </td>
+                          <td className="py-3 px-4 font-normal text-black text-sm">
+                            {worker.position}
+                          </td>
+                          <td className="py-3 px-4 font-normal text-black text-sm">
+                            {worker.project}
+                          </td>
+                          <td className={`py-3 px-4 font-normal text-sm font-medium ${selectedStatus === 'approved' ? 'text-green-700' : 'text-red-700'}`}>
+                            {worker.appliedDate}
+                          </td>
+                        </tr>
+                      ))}
+                      {currentWorkers.length === 0 && (
+                        <tr>
+                          <td colSpan={4} className="py-12 text-center text-gray-500 font-medium">
+                            No {selectedStatus} workers yet
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+
+              <div className="p-6 border-t bg-gray-50 flex gap-3">
+                <Button
+                  onClick={() => setPanelVisible(false)}
+                  className="flex-1 bg-[#FF9D00] hover:bg-[#FF8C00] text-white py-3 rounded-full font-bold [font-family:'Jost',Helvetica] shadow-md transition-all hover:scale-105"
+                >
+                  Close
+                </Button>
+              </div>
+            </Card>
+          </div>
+        </div>
+      )}
+    </>
   );
 };

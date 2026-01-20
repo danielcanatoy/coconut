@@ -7,6 +7,7 @@ interface CompanyProfileProps {
   onClose: () => void;
 }
 
+
 export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -68,9 +69,7 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
       <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
         <CardContent className="p-10">
           <div className="grid grid-cols-3 gap-12 mb-8">
-            
-            <div className="col-span-2 space-y-6">
-              
+            <div className="col-span-2 space-y-6">          
               <div>
                 <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
                   Company Name
@@ -97,6 +96,7 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
                     className={`w-full h-[44px] text-base transition-all ${inputClass}`}
                   />
                 </div>
+
                 <div>
                   <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
                     Registration Number
@@ -137,6 +137,7 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
                     className={`w-full h-[44px] text-base transition-all ${inputClass}`}
                   />
                 </div>
+
                 <div>
                   <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
                     Contact Number
