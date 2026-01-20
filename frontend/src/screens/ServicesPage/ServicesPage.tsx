@@ -71,19 +71,18 @@ export const ServicesPage = (): JSX.Element => {
     What Will It Be?
   </h1>
 
-  <div className="max-w-[900px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-5 px-2">
-
+  <div className="max-w-[1100px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 px-2">
     <Card className="bg-[#ff9d00] border-none rounded-[24px] shadow-[0px_6px_12px_#00000040]">
-      <CardContent className="p-6 flex flex-col items-center">
-        <h2 className="[font-family:'Jost',Helvetica] font-bold text-black text-[24px] text-center tracking-[0] leading-[normal] mb-4">
+      <CardContent className="p-8 flex flex-col items-center">
+        <h2 className="[font-family:'Jost',Helvetica] font-bold text-black text-[28px] text-center tracking-[0] leading-[normal] mb-4">
           Need to Hire Workers?
         </h2>
 
-        <p className="[font-family:'Jost',Helvetica] font-normal text-black text-base text-center tracking-[0] leading-[normal] mb-4">
+        <p className="[font-family:'Jost',Helvetica] font-normal text-black text-base text-center tracking-[0] leading-[normal] mb-6">
           Manpower not enough in your current project? Or just seeking manpower in general?
         </p>
 
-        <ul className="[font-family:'Jost',Helvetica] font-normal text-black text-sm mb-2 space-y-0.5 self-start">
+        <ul className="[font-family:'Jost',Helvetica] font-normal text-black text-base mb-2 space-y-1 self-start">
           <li>· Reliable</li>
           <li>· Professional</li>
           <li>· Hardworking</li>
@@ -93,7 +92,7 @@ export const ServicesPage = (): JSX.Element => {
 
         <Button
           onClick={() => setIsAuthModalOpen(true)}
-          className="bg-white hover:bg-gray-100 text-black rounded-[48px] h-10 px-6  [font-family:'Jost',Helvetica] font-semibold text-base mt-2"
+          className="bg-white hover:bg-gray-100 text-black rounded-[48px] h-[48px] px-8 [font-family:'Jost',Helvetica] font-semibold text-lg mt-2"
         >
           Hire Workers
         </Button>
@@ -101,16 +100,16 @@ export const ServicesPage = (): JSX.Element => {
     </Card>
 
     <Card className="bg-[#ff9d00] border-none rounded-[24px] shadow-[0px_6px_12px_#00000040]">
-      <CardContent className="p-6 flex flex-col items-center">
-        <h2 className="[font-family:'Jost',Helvetica] font-bold text-black text-[24px] text-center tracking-[0] leading-[normal] mb-4">
+      <CardContent className="p-8 flex flex-col items-center">
+        <h2 className="[font-family:'Jost',Helvetica] font-bold text-black text-[28px] text-center tracking-[0] leading-[normal] mb-4">
           Apply to Become a Worker!
         </h2>
 
-        <p className="[font-family:'Jost',Helvetica] font-normal text-black text-base text-center tracking-[0] leading-[normal] mb-4">
+        <p className="[font-family:'Jost',Helvetica] font-normal text-black text-base text-center tracking-[0] leading-[normal] mb-6">
           Looking for a job? Skilled manpower like you is always in demand!
         </p>
 
-        <ul className="[font-family:'Jost',Helvetica] font-normal text-black text-sm mb-2 space-y-0.5 self-start">
+        <ul className="[font-family:'Jost',Helvetica] font-normal text-black text-base mb-9 space-y-1 self-start">
           <li>· Reliable</li>
           <li>· Professional</li>
           <li>· Hardworking</li>
@@ -120,7 +119,7 @@ export const ServicesPage = (): JSX.Element => {
 
         <Button
           onClick={() => setIsAuthModalOpen(true)}
-          className="bg-white hover:bg-gray-100 text-black rounded-[48px] h-10 px-6  [font-family:'Jost',Helvetica] font-semibold text-base mt-2"
+          className="bg-white hover:bg-gray-100 text-black rounded-[48px] h-[48px] px-8 [font-family:'Jost',Helvetica] font-semibold text-lg mt-2"
         >
           Find Work
         </Button>
