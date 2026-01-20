@@ -46,7 +46,7 @@ export const WorkerPage = (): JSX.Element => {
                 className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-lg transition-colors ${
                   activeSection === "home"
                     ? "bg-[#ff9d00] text-black"
-                    : "bg-white text-black hover:bg-gray-100"
+                    : "bg-white text-black hover:bg-[#ffce80]"
                 }`}
               >
                 Home
@@ -57,7 +57,7 @@ export const WorkerPage = (): JSX.Element => {
                 className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-lg transition-colors ${
                   activeSection === "projects"
                     ? "bg-[#ff9d00] text-black"
-                    : "bg-white text-black hover:bg-gray-100"
+                    : "bg-white text-black hover:bg-[#ffce80]"
                 }`}
               >
                 Projects
@@ -68,7 +68,7 @@ export const WorkerPage = (): JSX.Element => {
                 className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-lg transition-colors ${
                   activeSection === "messages"
                     ? "bg-[#ff9d00] text-black"
-                    : "bg-white text-black hover:bg-gray-100"
+                    : "bg-white text-black hover:bg-[#ffce80]"
                 }`}
               >
                 Messages
