@@ -4,7 +4,7 @@ import { WorkerHome } from "./sections/WorkerHome";
 import { WorkerProjects } from "./sections/WorkerProjects";
 import { WorkerMessages } from "./sections/WorkerMessages";
 import { WorkerProfile } from "./sections/WorkerProfile";
-import { WorkerListings } from "./sections/WorkerListings";
+import { WorkerListings } from "./sections/WorkerListing";
 
 import { useNavigate } from "react-router-dom";
 
