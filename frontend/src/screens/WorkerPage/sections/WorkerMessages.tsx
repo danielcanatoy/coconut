@@ -79,7 +79,7 @@ export const WorkerMessages = (): JSX.Element => {
   };
 
   return (
-    <div className="grid grid-cols-4 gap-6 max-w-[1280px] mx-auto h-full">
+    <div className="grid grid-cols-4 gap-6  h-full">
     <div className="col-span-1 max-w-[300px]">
         <h2 className="[font-family:'Jost',Helvetica] font-normal text-black text-1 bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
           Conversations

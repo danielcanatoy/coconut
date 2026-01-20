@@ -39,7 +39,7 @@ export const WorkerProjects = (): JSX.Element => {
   const closeView = () => setSelectedProject(null);
 
   return (
-    <div className="space-y-8 max-w-[1280px] mx-auto px-6">
+    <div className="space-y-8 px-6">
       <div>
         <h2 className="[font-family:'Jost',Helvetica] font-normal text-black text-1 bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
           Active Projects
@@ -47,7 +47,7 @@ export const WorkerProjects = (): JSX.Element => {
         <br />
         <br />
 
-        <div className="grid grid-cols-2 gap-6 max-w-[900px]">
+        <div className="grid grid-cols-2 gap-6">
           {activeProjects.map((project) => (
             <Card
               key={project.id}
@@ -103,6 +103,8 @@ export const WorkerProjects = (): JSX.Element => {
                 </Button>
               </CardContent>
             </Card>
+            
+            
           ))}
         </div>
       </div>
