@@ -4,9 +4,11 @@ import { WorkerHome } from "./sections/WorkerHome";
 import { WorkerProjects } from "./sections/WorkerProjects";
 import { WorkerMessages } from "./sections/WorkerMessages";
 import { WorkerProfile } from "./sections/WorkerProfile";
+import { WorkerListings } from "./sections/WorkerListings";
+
 import { useNavigate } from "react-router-dom";
 
-type ActiveSection = "home" | "projects" | "messages";
+type ActiveSection = "home" | "projects" | "messages" | "listings";
 
 export const WorkerPage = (): JSX.Element => {
   const [activeSection, setActiveSection] = useState<ActiveSection>("home");
@@ -28,6 +30,7 @@ export const WorkerPage = (): JSX.Element => {
       />
 
       <div className="flex h-screen relative z-10">
+        {/* Sidebar */}
         <aside className="w-[200px] bg-[#f5e6d3] shadow-[2px_0px_8px_#00000020] flex flex-col overflow-y-auto">
           <div className="p-6 space-y-4">
             <div className="text-center">
@@ -64,6 +67,17 @@ export const WorkerPage = (): JSX.Element => {
               </button>
 
               <button
+                onClick={() => setActiveSection("listings")}
+                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-lg transition-colors ${
+                  activeSection === "listings"
+                    ? "bg-[#ff9d00] text-black"
+                    : "bg-white text-black hover:bg-[#ffce80]"
+                }`}
+              >
+                Listings
+              </button>
+
+              <button
                 onClick={() => setActiveSection("messages")}
                 className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-lg transition-colors ${
                   activeSection === "messages"
@@ -86,17 +100,19 @@ export const WorkerPage = (): JSX.Element => {
           </div>
         </aside>
 
+        {/* Main Content */}
         <main className="flex-1 overflow-y-auto p-8">
-          {showProfileEdit ? (
-            <WorkerProfile onClose={() => setShowProfileEdit(false)} />
-          ) : (
-            <>
-              {activeSection === "home" && <WorkerHome />}
-              {activeSection === "projects" && <WorkerProjects />}
-              {activeSection === "messages" && <WorkerMessages />}
-            </>
-          )}
-        </main>
+  {showProfileEdit ? (
+    <WorkerProfile onClose={() => setShowProfileEdit(false)} />
+  ) : (
+    <>
+      {activeSection === "home" && <WorkerHome />}
+      {activeSection === "projects" && <WorkerProjects />}
+      {activeSection === "listings" && <WorkerListings />}
+      {activeSection === "messages" && <WorkerMessages />}
+    </>
+  )}
+</main>
       </div>
     </div>
   );

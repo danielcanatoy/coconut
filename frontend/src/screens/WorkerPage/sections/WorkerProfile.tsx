@@ -19,7 +19,7 @@ interface WorkerFormData {
   canWorkOvertime: boolean;
 
   experience: string;
-  certifications: string;
+  certifications: File | null;
   availability: string;
   preferredWages: string;
   workLocation: string;
@@ -35,27 +35,31 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
   const location = useLocation();
   const { email, password, userType } = location.state || {};
   const skillOptions = [
-    "Carpenter",
-    "Mason",
-    "Welder",
-    "Painter",
-    "Electrician",
-    "Plumber",
-    "Heavy Equipment Operator",
-  ];
+  "Carpenter",
+  "Mason",
+  "Welder",
+  "Painter",
+  "Electrician",
+  "Plumber",
+  "Heavy Equipment Operator",
+];
 
   const [profilePreview, setProfilePreview] = useState<string>("");
 
-  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleProfileImageChange = (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setProfilePreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    setProfilePreview(reader.result as string);
   };
+  reader.readAsDataURL(file);
+};
+
+
 
   const [formData, setFormData] = useState<WorkerFormData>({
     firstName: "",
@@ -71,7 +75,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
     canReadPlans: false,
     canWorkOvertime: false,
     experience: "",
-    certifications: "",
+    certifications: null,
     availability: "",
     preferredWages: "",
     workLocation: "",
@@ -101,7 +105,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
 
   const handleChange = <K extends keyof WorkerFormData>(
     field: K,
-    value: WorkerFormData[K],
+    value: WorkerFormData[K]
   ) => {
     setFormData((prev) => ({
       ...prev,
@@ -136,6 +140,9 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
     window.location.reload();
   };
 
+  
+  
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -149,13 +156,14 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
           Cancel
         </Button>
       </div>
+      
 
       <Card className="bg-white border-none rounded-[20px] shadow-[0px_4px_12px_#00000020]">
         <CardContent className="p-8">
-          <div className="flex justify-center items-start">
-            <label className="cursor-pointer">
-              <div
-                className="
+<div className="flex justify-center items-start">
+  <label className="cursor-pointer">
+    <div
+      className="
         w-[120px]
         h-[120px]
         rounded-full
@@ -166,27 +174,30 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
         overflow-hidden
         hover:bg-gray-200
       "
-              >
-                {profilePreview ? (
-                  <img
-                    src={profilePreview}
-                    alt="Profile Preview"
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <span className="text-gray-500 text-sm">Upload</span>
-                )}
-              </div>
+    >
+      {profilePreview ? (
+        <img
+          src={profilePreview}
+          alt="Profile Preview"
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <span className="text-gray-500 text-sm">
+          Upload
+        </span>
+      )}
+    </div>
 
-              <input
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={handleProfileImageChange}
-              />
-            </label>
-          </div>
+    <input
+      type="file"
+      accept="image/*"
+      className="hidden"
+      onChange={handleProfileImageChange}
+    />
+  </label>
+</div>
 
+          
           <div className="grid grid-cols-3 gap-6 mb-8">
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
@@ -200,12 +211,12 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                   [font-family:'Jost',Helvetica] font-normal text-black
                   border border-gray-300 rounded-lg
                   focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
-              />
+                  />
             </div>
 
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
-                Middle Initial
+                M.I.
               </label>
               <Input
                 type="text"
@@ -215,7 +226,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 [font-family:'Jost',Helvetica] font-normal text-black
                 border border-gray-300 rounded-lg
                 focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
-              />
+                />
             </div>
 
             <div>
@@ -230,7 +241,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                   [font-family:'Jost',Helvetica] font-normal text-black
                   border border-gray-300 rounded-lg
                   focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
-              />
+                  />
             </div>
           </div>
 
@@ -247,7 +258,7 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                   [font-family:'Jost',Helvetica] font-normal text-black
                   border border-gray-300 rounded-lg
                   focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
-              />
+                  />
             </div>
 
             <div>
@@ -258,32 +269,32 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 type="text"
                 value={formData.gender}
                 onChange={(e) => handleChange("gender", e.target.value)}
-                className="w-full h-[44px] bg-white px-4
+                 className="w-full h-[44px] bg-white px-4
                   [font-family:'Jost',Helvetica] font-normal text-black
                   border border-gray-300 rounded-lg
                   focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
-              />
+                  />
             </div>
           </div>
 
           <h3 className="[font-family:'Jost',Helvetica] font-bold text-black text-lg mb-4">
-            Contact Informations
+            Contact Information
           </h3>
 
           <div className="grid grid-cols-2 gap-6 mb-8">
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
-                Email Addresses
+                Email Address
               </label>
               <Input
                 type="email"
                 value={formData.email}
                 onChange={(e) => handleChange("email", e.target.value)}
-                className="w-full h-[44px] bg-white px-4
+                 className="w-full h-[44px] bg-white px-4
                   [font-family:'Jost',Helvetica] font-normal text-black
                   border border-gray-300 rounded-lg
                   focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
-              />
+                  />
             </div>
 
             <div>
@@ -298,72 +309,76 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                   [font-family:'Jost',Helvetica] font-normal text-black
                   border border-gray-300 rounded-lg
                   focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
-              />
+                  />
             </div>
           </div>
 
           <h3 className="[font-family:'Jost',Helvetica] font-bold text-black text-lg mb-4">
             Work & Skill (Checkbox)
           </h3>
-
+          
           {/* Skills Checkbox Selection */}
-          <div className="col-span-2 mt-4">
-            <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
-              Select Skills
-            </label>
+              <div className="col-span-2 mt-4">
+              <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
+                Select Skills
+              </label>
 
-            <div className="grid grid-cols-2 gap-3">
-              {skillOptions.map((skill) => (
-                <label key={skill} className="flex items-center gap-2 text-sm">
+              <div className="grid grid-cols-2 gap-3">
+                {skillOptions.map((skill) => (
+                  <label key={skill} className="flex items-center gap-2 text-sm">
+                    <input
+                      type="checkbox"
+                      checked={formData.skills.includes(skill)}
+                      onChange={(e) => {
+                        setFormData((prev) => ({
+                          ...prev,
+                          skills: e.target.checked
+                            ? [...prev.skills, skill]
+                            : prev.skills.filter((s) => s !== skill),
+                        }));
+                      }}
+                    />
+                    {skill}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+                          {/* Capability Checkboxes */}
+              <div className="col-span-2 mt-4">
+                <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
+                  Capabilities
+                </label>
+
+                <label className="flex items-center gap-2 text-sm mb-2">
                   <input
                     type="checkbox"
-                    checked={formData.skills.includes(skill)}
-                    onChange={(e) => {
-                      setFormData((prev) => ({
-                        ...prev,
-                        skills: e.target.checked
-                          ? [...prev.skills, skill]
-                          : prev.skills.filter((s) => s !== skill),
-                      }));
-                    }}
+                    checked={formData.canReadPlans}
+                    onChange={(e) =>
+                      handleChange("canReadPlans", e.target.checked)
+                    }
                   />
-                  {skill}
+                  Can Read Construction Plans
                 </label>
-              ))}
-            </div>
-          </div>
 
-          {/* Capability Checkboxes */}
-          {/*<div className="col-span-2 mt-4">
-            <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
-              Capabilities
-            </label>
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={formData.canWorkOvertime}
+                    onChange={(e) =>
+                      handleChange("canWorkOvertime", e.target.checked)
+                    }
+                  />
+                  Can Work Overtime
+                </label>
+              </div>
 
-            <label className="flex items-center gap-2 text-sm mb-2">
-              <input
-                type="checkbox"
-                checked={formData.canReadPlans}
-                onChange={(e) => handleChange("canReadPlans", e.target.checked)}
-              />
-              Can Read Construction Plans
-            </label>
 
-            <label className="flex items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={formData.canWorkOvertime}
-                onChange={(e) =>
-                  handleChange("canWorkOvertime", e.target.checked)
-                }
-              />
-              Can Work Overtime
-            </label>
-          </div>*/}
 
           <div className="grid grid-cols-2 gap-6 mb-8">
-            {/*<div>
+            <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
-                Skillsss
+                Skills
               </label>
               <Input
                 type="text"
@@ -371,11 +386,11 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 onChange={(e) =>
                   handleChange(
                     "skills",
-                    e.target.value.split(",").map((s) => s.trim()),
+                    e.target.value.split(",").map((s) => s.trim())
                   )
                 }
               />
-            </div>*/}
+            </div>
 
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
@@ -389,36 +404,51 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                   [font-family:'Jost',Helvetica] font-normal text-black
                   border border-gray-300 rounded-lg
                   focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
-              />
+                  />
             </div>
+
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
                 Certifications
               </label>
-              <Input
-                type="text"
-                value={formData.certifications}
-                onChange={(e) => handleChange("certifications", e.target.value)}
-                className="w-full h-[44px] bg-gray-100 rounded-lg px-4 [font-family:'Jost',Helvetica] font-normal text-black border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-              />
+              <input
+  type="file"
+  accept=".pdf,.jpg,.jpeg,.png"
+  
+  onChange={(e) =>
+    handleChange(
+      "certifications",
+      e.target.files ? e.target.files[0] : null
+    )
+  
+  }
+   className="w-full h-[44px] bg-white px-4
+                  [font-family:'Jost',Helvetica] font-normal text-black
+                  border border-gray-300 rounded-lg
+                  focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
+                  />
+
+
             </div>
+
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
-                Availability
+                Availability & Location
               </label>
               <Input
                 type="text"
                 value={formData.availability}
                 onChange={(e) => handleChange("availability", e.target.value)}
-                className="w-full h-[44px] bg-white px-4
+                 className="w-full h-[44px] bg-white px-4
                   [font-family:'Jost',Helvetica] font-normal text-black
                   border border-gray-300 rounded-lg
                   focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
-              />
+                  />
             </div>
+
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
-                Preferred Wage
+                Preferred Wage Location: Willing to travel (5) KM
               </label>
               <Input
                 type="text"
@@ -428,22 +458,24 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                   [font-family:'Jost',Helvetica] font-normal text-black
                   border border-gray-300 rounded-lg
                   focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
-              />
+                  />
             </div>
+
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
-                Location
+                Expected Salary
               </label>
               <Input
                 type="text"
                 value={formData.workLocation}
                 onChange={(e) => handleChange("workLocation", e.target.value)}
-                className="w-full h-[44px] bg-white px-4
+                 className="w-full h-[44px] bg-white px-4
                   [font-family:'Jost',Helvetica] font-normal text-black
                   border border-gray-300 rounded-lg
                   focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
-              />
+                  />
             </div>
+
             <div>
               <label className="block [font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-2">
                 Languages
@@ -454,14 +486,15 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
                 onChange={(e) =>
                   handleChange(
                     "languages",
-                    e.target.value.split(",").map((s) => s.trim()),
+                    e.target.value.split(",").map((s) => s.trim())
                   )
                 }
-                className="w-full h-[44px] bg-white px-4
+                 className="w-full h-[44px] bg-white px-4
                   [font-family:'Jost',Helvetica] font-normal text-black
                   border border-gray-300 rounded-lg
                   focus:border-[#FF9D00] focus:ring-1 focus:ring-[#FF9D00]"
-              />
+                  />
+              
             </div>
           </div>
 
