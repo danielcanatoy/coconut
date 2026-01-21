@@ -16,16 +16,42 @@ export const SignupPage = (): JSX.Element => {
   const [password, setPassword] = useState("");
   const [userType, setUserType] = useState<"worker" | "employer" | null>(null);
 
-  const handleSignup = () => {
-    console.log("Signup attempt:", { email, password, userType });
+  const handleSignup = async () => {
+    if (!email || !password || !userType) {
+      alert("Please fill in all fields and choose a role");
+      return;
+    }
 
-    navigate(userType === "worker" ? "/worker" : "/to-hire", {
-      state: {
-        email,
-        password,
-        userType,
-      },
-    });
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          role: userType, // 👈 kung anong pinindot (worker / employer)
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!data.success) {
+        alert(data.message || "Signup failed");
+        return;
+      }
+
+      // ✅ AUTO LOGIN: save token & role
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.user.role);
+
+      // ✅ DIRECT DASHBOARD REDIRECT
+      navigate(data.user.role === "worker" ? "/worker" : "/to-hire");
+    } catch (error) {
+      console.error(error);
+      alert("Server error. Please try again.");
+    }
   };
 
   return (
