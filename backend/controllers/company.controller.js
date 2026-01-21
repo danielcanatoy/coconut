@@ -1,7 +1,12 @@
 import { db } from "../config/db.js";
 
 export const createListing = (req, res) => {
-  const employerId = req.user.id;
+  if (req.user.role !== "employer") {
+    return res.status(403).json({ message: "Employers only" });
+  }
+
+  const employerId = req.user.id; // users.id (OK for now)
+
   const { position, inNeedOf, timeIn, timeOut, salary, workDays, location } =
     req.body;
 
@@ -14,7 +19,7 @@ export const createListing = (req, res) => {
   db.query(
     sql,
     [
-      employer_id,
+      employerId,
       position,
       inNeedOf,
       timeIn,
@@ -26,9 +31,10 @@ export const createListing = (req, res) => {
     (err, result) => {
       if (err) {
         console.error("DB ERROR:", err);
-        return res.status(500).json({ message: "DB error" });
+        return res.status(500).json({ success: false });
       }
-      res.status(201).json({ id: result.insertId });
+
+      res.status(201).json({ success: true, id: result.insertId });
     },
   );
 };
@@ -37,12 +43,26 @@ export const getListings = (req, res) => {
   const employerId = req.user.id;
 
   db.query(
-    "SELECT * FROM listings WHERE employer_id = ? ORDER BY created_at DESC",
+    `
+    SELECT
+      id,
+      position,
+      in_need_of AS inNeedOf,
+      time_in AS timeIn,
+      time_out AS timeOut,
+      salary,
+      work_days AS workDays,
+      progress,
+      location
+    FROM listings
+    WHERE employer_id = ?
+    ORDER BY created_at DESC
+    `,
     [employerId],
     (err, rows) => {
       if (err) {
-        console.error(err);
-        return res.status(500).json(err);
+        console.error("GET LISTINGS ERROR:", err);
+        return res.status(500).json([]);
       }
       res.json(rows);
     },

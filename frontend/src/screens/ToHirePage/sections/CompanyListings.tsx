@@ -18,7 +18,6 @@ interface Listing {
 interface NewListing {
   position: string;
   inNeedOf: string;
-  count: string;
   timeIn: string;
   timeOut: string;
   salary: string;
@@ -34,7 +33,6 @@ export const CompanyListings = (): JSX.Element => {
   const [formData, setFormData] = useState<NewListing>({
     position: "",
     inNeedOf: "",
-    count: "",
     timeIn: "",
     timeOut: "",
     salary: "",
@@ -119,7 +117,6 @@ export const CompanyListings = (): JSX.Element => {
       setFormData({
         position: "",
         inNeedOf: "",
-        count: "",
         timeIn: "",
         timeOut: "",
         salary: "",
