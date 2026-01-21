@@ -2,13 +2,22 @@ import express from "express";
 import {
   createListing,
   getListings,
+  getCompanyProfile,
+  updateCompanyProfile,
 } from "../controllers/company.controller.js";
 
-import { authMiddleware } from "../middleware/auth.middleware.js";
+// ✅ CHANGE THIS TO MATCH YOUR ACTUAL MIDDLEWARE FILENAME
+import { authenticateToken } from "../middleware/auth.middleware.js"; 
+// OR: import { authMiddleware } from "../middleware/auth.middleware.js";
 
 const router = express.Router();
 
-router.post("/listings", authMiddleware, createListing);
-router.get("/listings", authMiddleware, getListings);
+// Profile routes
+router.get("/profile", authenticateToken, getCompanyProfile);
+router.put("/profile", authenticateToken, updateCompanyProfile);
+
+// Listing routes
+router.post("/listing", authenticateToken, createListing);
+router.get("/listings", authenticateToken, getListings);
 
 export default router;
