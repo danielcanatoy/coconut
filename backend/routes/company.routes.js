@@ -3,14 +3,32 @@ import { db } from "../config/db.js"; // Siguraduhing tama ang path ng db config
 import {
   createListing,
   getListings,
+  getCompanyProfile,
+  updateCompanyProfile,
 } from "../controllers/company.controller.js";
+
 import { authMiddleware } from "../middleware/auth.middleware.js";
 
-const router = express.Router();
 
 // --- LISTINGS ---
 router.post("/listings", authMiddleware, createListing);
 router.get("/listings", authMiddleware, getListings);
+
+
+// ✅ CHANGE THIS TO MATCH YOUR ACTUAL MIDDLEWARE FILENAME
+import { authenticateToken } from "../middleware/auth.middleware.js"; 
+// OR: import { authMiddleware } from "../middleware/auth.middleware.js";
+
+const router = express.Router();
+
+// Profile routes
+router.get("/profile", authenticateToken, getCompanyProfile);
+router.put("/profile", authenticateToken, updateCompanyProfile);
+
+// Listing routes
+router.post("/listing", authenticateToken, createListing);
+router.get("/listings", authenticateToken, getListings);
+
 
 // --- APPLICANTS ---
 // Mas mainam gamitin ang authMiddleware para makuha ang employerId mula sa token

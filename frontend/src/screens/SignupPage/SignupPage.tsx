@@ -28,10 +28,11 @@ export const SignupPage = (): JSX.Element => {
         headers: {
           "Content-Type": "application/json",
         },
+        credentials: "include", // 👈 IMPORTANT: allows auth cookie to be saved!
         body: JSON.stringify({
           email,
           password,
-          role: userType, // 👈 kung anong pinindot (worker / employer)
+          role: userType, // worker or employer
         }),
       });
 
@@ -42,12 +43,14 @@ export const SignupPage = (): JSX.Element => {
         return;
       }
 
-      // ✅ AUTO LOGIN: save token & role
-      localStorage.setItem("token", data.token);
+      // ✅ SAVE USER INFO (Optional, since cookie handles auth)
       localStorage.setItem("role", data.user.role);
+      // No need to save token if using httpOnly cookies, but keep if your backend sends it
+      if (data.token) localStorage.setItem("token", data.token);
 
-      // ✅ DIRECT DASHBOARD REDIRECT
+      // ✅ REDIRECT TO DASHBOARD
       navigate(data.user.role === "worker" ? "/worker" : "/to-hire");
+      
     } catch (error) {
       console.error(error);
       alert("Server error. Please try again.");
