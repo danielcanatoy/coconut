@@ -41,15 +41,15 @@ export const WorkerListings = (): JSX.Element => {
 
   return (
     <div className="space-y-6 px-6 py-4">
-      <h1 className=" font-bold [font-family:'Jost',Helvetica] text-black mb-4">
+      <h1 className=" font-normal [font-family:'Jost',Helvetica] text-black mb-4 bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
         Company Listings
       </h1>
 
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-3 gap-10 ">
         {companyListings.map((listing) => (
           <Card
             key={listing.id}
-            className="border-none rounded-[20px] shadow-[0px_4px_12px_#00000020] bg-[#FF9D00]"
+            className="border-none rounded-[20px] max-w-[400px] shadow-[0px_4px_12px_#00000020] bg-[#FF9D00]"
           >
             <CardContent className="p-6 flex flex-col text-center">
               <p className="text-2xl font-bold [font-family:'Jost',Helvetica] text-black mb-2">
@@ -89,7 +89,7 @@ export const WorkerListings = (): JSX.Element => {
 
               {/* Apply button */}
               <button
-                className="bg-white text-black px-10 py-2 rounded-lg font-semibold mx-auto block"
+                className="bg-white text-black px-10 py-2 rounded-lg font-semibold mx-auto block hover:bg-gray-100 hover:shadow-md transition-shadow duration-200"
                 onClick={() => handleApply(listing)}
               >
                 Apply

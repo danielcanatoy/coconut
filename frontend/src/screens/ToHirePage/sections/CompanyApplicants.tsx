@@ -11,54 +11,24 @@ interface Applicant {
   status: string;
 }
 
-const applicants: Applicant[] = [
-  {
-    id: 1,
-    name: "John Doe",
-    position: "Carpenter",
-    project: "Mall Construction",
-    appliedDate: "2026-01-10",
-    status: "pending",
-  },
-  {
-    id: 2,
-    name: "Jane Smith",
-    position: "Electrician",
-    project: "House Renovation",
-    appliedDate: "2026-01-09",
-    status: "pending",
-  },
-  {
-    id: 3,
-    name: "Mike Johnson",
-    position: "Welder",
-    project: "Bridge Repair",
-    appliedDate: "2026-01-08",
-    status: "approved",
-  },
-  {
-    id: 4,
-    name: "Sarah Williams",
-    position: "Steelman",
-    project: "Mall Construction",
-    appliedDate: "2026-01-07",
-    status: "pending",
-  },
-  {
-    id: 5,
-    name: "Robert Brown",
-    position: "Carpenter",
-    project: "House Renovation",
-    appliedDate: "2026-01-06",
-    status: "rejected",
-  },
-];
-
 export const CompanyApplicants = (): JSX.Element => {
   const [currentTime, setCurrentTime] = useState<string>("");
   const [selectedStatus, setSelectedStatus] = useState<'approved' | 'rejected'>('approved');
   const [panelVisible, setPanelVisible] = useState(false);
 
+  // STATE: pending + history
+  const [pendingApplicants, setPendingApplicants] = useState<Applicant[]>([
+    { id: 1, name: "John Doe", position: "Carpenter", project: "Mall Construction", appliedDate: "2026-01-10", status: "pending" },
+    { id: 2, name: "Jane Smith", position: "Electrician", project: "House Renovation", appliedDate: "2026-01-09", status: "pending" },
+    { id: 4, name: "Sarah Williams", position: "Steelman", project: "Mall Construction", appliedDate: "2026-01-07", status: "pending" },
+  ]);
+
+  const [historyApplicants, setHistoryApplicants] = useState<Applicant[]>([
+    { id: 3, name: "Mike Johnson", position: "Welder", project: "Bridge Repair", appliedDate: "2026-01-08", status: "approved" },
+    { id: 5, name: "Robert Brown", position: "Carpenter", project: "House Renovation", appliedDate: "2026-01-06", status: "rejected" },
+  ]);
+
+  // CLOCK
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -76,20 +46,37 @@ export const CompanyApplicants = (): JSX.Element => {
     return () => clearInterval(intervalId);
   }, []);
 
-  const pendingApplicants = applicants.filter(a => a.status === "pending");
-  const approvedWorkers = applicants.filter(a => a.status === "approved");
-  const rejectedWorkers = applicants.filter(a => a.status === "rejected");
-  const currentWorkers = selectedStatus === 'approved' ? approvedWorkers : rejectedWorkers;
+  // HANDLER: move applicant to history
+  const handleApplicantDecision = (id: number, status: "approved" | "rejected") => {
+  // Find applicant in pending
+  const applicant = pendingApplicants.find(a => a.id === id);
+  if (!applicant) return;
+
+  // Update pendingApplicants by removing this applicant
+  setPendingApplicants(prev => prev.filter(a => a.id !== id));
+
+  // Update historyApplicants by adding the applicant with new status
+  setHistoryApplicants(prev => [
+    ...prev,
+    { ...applicant, status }  // make sure status is updated
+  ]);
+};
+
+
+  // FILTERS
+  const currentWorkers = historyApplicants.filter(a => a.status === selectedStatus);
 
   return (
     <>
       <div className="relative flex flex-col gap-6">
+        {/* TIME DISPLAY */}
         <div className="flex items-center justify-end w-full">
           <span className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 [font-family:'Jost',Helvetica] font-medium text-black text-lg tracking-wide">
             {currentTime}
           </span>
         </div>
 
+        {/* JOB APPLICANTS */}
         <div className="w-full">
           <div className="flex items-center justify-between mb-4">
             <h1 className="[font-family:'Jost',Helvetica] font-normal text-black text-lg bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
@@ -98,9 +85,7 @@ export const CompanyApplicants = (): JSX.Element => {
             <button
               onClick={() => setPanelVisible(!panelVisible)}
               className={`[font-family:'Jost',Helvetica] font-normal text-black text-lg px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)] transition-all cursor-pointer hover:shadow-[0px_6px_12px_rgba(0,0,0,0.3)] ${
-                panelVisible
-                  ? 'bg-[#FF9D00]'
-                  : 'bg-white'
+                panelVisible ? 'bg-[#FF9D00]' : 'bg-white'
               }`}
             >
               Approval History
@@ -131,10 +116,16 @@ export const CompanyApplicants = (): JSX.Element => {
                     </div>
 
                     <div className="flex gap-2">
-                      <Button className="bg-green-600 hover:bg-green-700 text-white rounded-lg h-[32px] px-4 [font-family:'Jost',Helvetica] font-bold text-xs shadow-md transition-transform hover:scale-105">
+                      <Button
+                        onClick={() => handleApplicantDecision(applicant.id, "approved")}
+                        className="bg-green-600 hover:bg-green-700 text-white rounded-lg h-[32px] px-4 [font-family:'Jost',Helvetica] font-bold text-xs shadow-md transition-transform hover:scale-105"
+                      >
                         Approve
                       </Button>
-                      <Button className="bg-red-500 hover:bg-red-600 text-white rounded-lg h-[32px] px-4 [font-family:'Jost',Helvetica] font-bold text-xs shadow-md transition-transform hover:scale-105">
+                      <Button
+                        onClick={() => handleApplicantDecision(applicant.id, "rejected")}
+                        className="bg-red-500 hover:bg-red-600 text-white rounded-lg h-[32px] px-4 [font-family:'Jost',Helvetica] font-bold text-xs shadow-md transition-transform hover:scale-105"
+                      >
                         Reject
                       </Button>
                     </div>
@@ -151,7 +142,7 @@ export const CompanyApplicants = (): JSX.Element => {
         </div>
       </div>
 
-      {/* CENTERED MODAL - GREEN/RED TAB BUTTONS */}
+      {/* APPROVAL HISTORY MODAL */}
       {panelVisible && (
         <div 
           className="fixed inset-0 bg-black/30 flex items-center justify-center z-50 p-4"
@@ -175,7 +166,7 @@ export const CompanyApplicants = (): JSX.Element => {
                         : 'bg-white/70 text-black hover:bg-green-500 hover:text-white hover:shadow-[0px_4px_8px_rgba(0,0,0,0.25)]'
                     }`}
                   >
-                    Approved ({approvedWorkers.length})
+                    Approved ({historyApplicants.filter(a => a.status === 'approved').length})
                   </button>
                   <button
                     onClick={() => setSelectedStatus('rejected')}
@@ -185,7 +176,7 @@ export const CompanyApplicants = (): JSX.Element => {
                         : 'bg-white/70 text-black hover:bg-red-500 hover:text-white hover:shadow-[0px_4px_8px_rgba(0,0,0,0.25)]'
                     }`}
                   >
-                    Rejected ({rejectedWorkers.length})
+                    Rejected ({historyApplicants.filter(a => a.status === 'rejected').length})
                   </button>
                 </div>
               </div>
@@ -210,30 +201,26 @@ export const CompanyApplicants = (): JSX.Element => {
                       </tr>
                     </thead>
                     <tbody>
-                      {currentWorkers.map((worker) => (
+                      {historyApplicants
+                        .filter(a => a.status === selectedStatus)
+                        .map((worker) => (
                         <tr
                           key={worker.id}
                           className={`border-b ${selectedStatus === 'approved' ? 'border-green-200 hover:bg-green-50' : 'border-red-200 hover:bg-red-50'} transition-colors`}
                         >
-                          <td className="py-3 px-4 font-normal text-black text-sm">
-                            {worker.name}
-                          </td>
-                          <td className="py-3 px-4 font-normal text-black text-sm">
-                            {worker.position}
-                          </td>
-                          <td className="py-3 px-4 font-normal text-black text-sm">
-                            {worker.project}
-                          </td>
+                          <td className="py-3 px-4 font-normal text-black text-sm">{worker.name}</td>
+                          <td className="py-3 px-4 font-normal text-black text-sm">{worker.position}</td>
+                          <td className="py-3 px-4 font-normal text-black text-sm">{worker.project}</td>
                           <td className={`py-3 px-4 font-normal text-sm font-medium ${selectedStatus === 'approved' ? 'text-green-700' : 'text-red-700'}`}>
                             {worker.appliedDate}
                           </td>
                         </tr>
                       ))}
-                      {currentWorkers.length === 0 && (
+                      {historyApplicants.filter(a => a.status === selectedStatus).length === 0 && (
                         <tr>
                           <td colSpan={4} className="py-12 text-center text-gray-500 font-medium">
                             No {selectedStatus} workers yet
-                          </td>
+                          </td> 
                         </tr>
                       )}
                     </tbody>
