@@ -5,7 +5,7 @@ export const createListing = (req, res) => {
     return res.status(403).json({ message: "Employers only" });
   }
 
-  const employerId = req.user.id; // users.id (OK for now)
+  const employerId = req.user.id;
 
   const { position, inNeedOf, timeIn, timeOut, salary, workDays, location } =
     req.body;

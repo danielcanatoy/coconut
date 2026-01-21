@@ -1,42 +1,133 @@
 import { db } from "../config/db.js";
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
 
-const getWorkerByEmail = async (email) => {
-  const sql = `
-    SELECT w.id, w.user_id
-    FROM workers w
-    JOIN users u ON u.id = w.user_id
-    WHERE u.email = ?
-    LIMIT 1
-  `;
-  const [rows] = await db.promise().query(sql, [email]);
-  return rows.length ? rows[0] : null;
-};
-
-const ensureUserExists = async (email, password, role) => {
-  const checkSql = `SELECT id FROM users WHERE email = ? LIMIT 1`;
-  const [existing] = await db.promise().query(checkSql, [email]);
-
-  if (existing.length > 0) return existing[0].id;
-
-  if (!password || !role) {
-    throw new Error("Password and role are required for new users");
-  }
-
-  const insertSql = `
-    INSERT INTO users (email, password, role)
-    VALUES (?, ?, ?)
-  `;
-
-  const [result] = await db.promise().query(insertSql, [email, password, role]);
-  return result.insertId;
-};
-
-export const getWorkerProfileByEmail = async (req, res) => {
+/* =========================
+   REGISTER WORKER (SIGN UP)
+========================= */
+export const registerWorker = async (req, res) => {
   try {
-    const { email } = req.query;
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
+    const {
+      firstName,
+      middleInitial,
+      lastName,
+      dateOfBirth,
+      gender,
+      email,
+      mobileNumber,
+      skills,
+      experience,
+      certifications,
+      availability,
+      preferredWages,
+      workLocation,
+      languages,
+      password,
+    } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email and password are required" });
     }
+
+    if (!Array.isArray(skills) || !Array.isArray(languages)) {
+      return res.status(400).json({
+        message: "Skills and languages must be arrays",
+      });
+    }
+
+    // 🔍 Check if user already exists
+    const [existingUsers] = await db
+      .promise()
+      .query("SELECT id FROM users WHERE email = ?", [email]);
+
+    if (existingUsers.length) {
+      return res.status(409).json({ message: "Email already registered" });
+    }
+
+    // 🔐 Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // 👤 Create user
+    const [userResult] = await db.promise().query(
+      `INSERT INTO users (email, password, role)
+       VALUES (?, ?, 'worker')`,
+      [email, hashedPassword],
+    );
+
+    const userId = userResult.insertId;
+
+    // 🧑‍🔧 Create worker
+    const normalizedDateOfBirth = dateOfBirth
+      ? dateOfBirth.split("T")[0]
+      : null;
+
+    await db.promise().query(
+      `INSERT INTO workers (
+        user_id,
+        first_name,
+        middle_initial,
+        last_name,
+        email,
+        date_of_birth,
+        gender,
+        mobile_number,
+        skills,
+        experience,
+        certifications,
+        availability,
+        preferred_wages,
+        work_location,
+        languages
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        userId,
+        firstName,
+        middleInitial,
+        lastName,
+        email,
+        normalizedDateOfBirth,
+        gender,
+        mobileNumber,
+        JSON.stringify(skills),
+        experience,
+        certifications,
+        availability,
+        preferredWages,
+        workLocation,
+        JSON.stringify(languages),
+      ],
+    );
+
+    // 🔑 Generate JWT
+    const token = jwt.sign(
+      { id: userId, role: "worker" },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" },
+    );
+
+    res.status(201).json({
+      success: true,
+      token,
+      user: {
+        id: userId,
+        email,
+        role: "worker",
+      },
+    });
+  } catch (err) {
+    console.error("REGISTER WORKER ERROR:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+/* =========================
+   GET WORKER PROFILE
+========================= */
+export const getWorkerProfile = async (req, res) => {
+  try {
+    const userId = req.user.id;
 
     const sql = `
       SELECT
@@ -56,11 +147,11 @@ export const getWorkerProfileByEmail = async (req, res) => {
         w.languages
       FROM workers w
       JOIN users u ON u.id = w.user_id
-      WHERE u.email = ?
+      WHERE w.user_id = ?
       LIMIT 1
     `;
 
-    const [rows] = await db.promise().query(sql, [email]);
+    const [rows] = await db.promise().query(sql, [userId]);
 
     if (!rows.length) {
       return res.status(404).json({ exists: false });
@@ -82,15 +173,19 @@ export const getWorkerProfileByEmail = async (req, res) => {
   }
 };
 
-export const createOrUpdateWorkerProfile = async (req, res) => {
+/* =========================
+   UPDATE WORKER PROFILE
+========================= */
+export const updateWorkerProfile = async (req, res) => {
   try {
+    const userId = req.user.id;
+
     const {
       firstName,
       middleInitial,
       lastName,
       dateOfBirth,
       gender,
-      email,
       mobileNumber,
       skills,
       experience,
@@ -99,13 +194,7 @@ export const createOrUpdateWorkerProfile = async (req, res) => {
       preferredWages,
       workLocation,
       languages,
-      password, // create only
-      role, // create only
     } = req.body;
-
-    if (!email) {
-      return res.status(400).json({ message: "Email is required" });
-    }
 
     if (!Array.isArray(skills) || !Array.isArray(languages)) {
       return res.status(400).json({
@@ -113,37 +202,28 @@ export const createOrUpdateWorkerProfile = async (req, res) => {
       });
     }
 
-    const existingWorker = await getWorkerByEmail(email);
+    const normalizedDateOfBirth = dateOfBirth
+      ? dateOfBirth.split("T")[0]
+      : null;
 
-    // 🆕 CREATE
-    if (!existingWorker) {
-      const userId = await ensureUserExists(email, password, role);
-
-      const insertSql = `
-        INSERT INTO workers (
-          user_id,
-          first_name,
-          middle_initial,
-          last_name,
-          date_of_birth,
-          gender,
-          mobile_number,
-          skills,
-          experience,
-          certifications,
-          availability,
-          preferred_wages,
-          work_location,
-          languages
-        )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-      const normalizedDateOfBirth = dateOfBirth
-        ? dateOfBirth.split("T")[0]
-        : null;
-
-      const values = [
-        userId,
+    await db.promise().query(
+      `UPDATE workers
+       SET
+         first_name = ?,
+         middle_initial = ?,
+         last_name = ?,
+         date_of_birth = ?,
+         gender = ?,
+         mobile_number = ?,
+         skills = ?,
+         experience = ?,
+         certifications = ?,
+         availability = ?,
+         preferred_wages = ?,
+         work_location = ?,
+         languages = ?
+       WHERE user_id = ?`,
+      [
         firstName,
         middleInitial,
         lastName,
@@ -157,67 +237,16 @@ export const createOrUpdateWorkerProfile = async (req, res) => {
         preferredWages,
         workLocation,
         JSON.stringify(languages),
-      ];
-
-      const [result] = await db.promise().query(insertSql, values);
-
-      return res.status(201).json({
-        success: true,
-        created: true,
-        workerId: result.insertId,
-      });
-    }
-
-    // 🔁 UPDATE
-    const updateSql = `
-      UPDATE workers
-      SET
-        first_name = ?,
-        middle_initial = ?,
-        last_name = ?,
-        date_of_birth = ?,
-        gender = ?,
-        mobile_number = ?,
-        skills = ?,
-        experience = ?,
-        certifications = ?,
-        availability = ?,
-        preferred_wages = ?,
-        work_location = ?,
-        languages = ?
-      WHERE user_id = ?
-
-    `;
-    const normalizedDateOfBirth = dateOfBirth
-      ? dateOfBirth.split("T")[0]
-      : null;
-
-    const updateValues = [
-      firstName,
-      middleInitial,
-      lastName,
-      normalizedDateOfBirth,
-      gender,
-      mobileNumber,
-      JSON.stringify(skills),
-      experience,
-      certifications,
-      availability,
-      preferredWages,
-      workLocation,
-      JSON.stringify(languages),
-      existingWorker.user_id,
-    ];
-
-    await db.promise().query(updateSql, updateValues);
+        userId,
+      ],
+    );
 
     res.json({
       success: true,
-      updated: true,
       message: "Worker profile updated successfully",
     });
-  } catch (error) {
-    console.error("CREATE / UPDATE WORKER ERROR:", error);
-    res.status(500).json({ message: error.message });
+  } catch (err) {
+    console.error("UPDATE WORKER ERROR:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };

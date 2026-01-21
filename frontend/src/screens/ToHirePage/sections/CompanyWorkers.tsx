@@ -9,12 +9,37 @@ interface Worker {
 }
 
 const currentWorkers: Worker[] = [
-  { id: 1, name: "Daniel Casutoy", role: "Steelman", project: "Mall Construction" },
-  { id: 2, name: "Marvin San Diego", role: "Mason", project: "House Renovation" },
-  { id: 3, name: "Chrislyn Devers", role: "Taga kape", project: "Office Build" },
-  { id: 4, name: "Jann Talania", role: "Carpenter", project: "Mall Construction" },
+  {
+    id: 1,
+    name: "Daniel Canatoy",
+    role: "Steelman",
+    project: "Mall Construction",
+  },
+  {
+    id: 2,
+    name: "Marvin San Diego",
+    role: "Mason",
+    project: "House Renovation",
+  },
+  {
+    id: 3,
+    name: "Chrislyn Devers",
+    role: "Taga kape",
+    project: "Office Build",
+  },
+  {
+    id: 4,
+    name: "Jann Talania",
+    role: "Carpenter",
+    project: "Mall Construction",
+  },
   { id: 5, name: "Maria Santos", role: "Welder", project: "Bridge Repair" },
-  { id: 6, name: "Jose Garcia", role: "Electrician", project: "House Renovation" },
+  {
+    id: 6,
+    name: "Jose Garcia",
+    role: "Electrician",
+    project: "House Renovation",
+  },
 ];
 
 export const CompanyWorkers = (): JSX.Element => {
@@ -29,7 +54,7 @@ export const CompanyWorkers = (): JSX.Element => {
           minute: "2-digit",
           second: "2-digit",
           hour12: true,
-        })
+        }),
       );
     };
     updateTime();
@@ -39,7 +64,6 @@ export const CompanyWorkers = (): JSX.Element => {
 
   return (
     <div className="relative flex flex-col gap-6">
-      
       <div className="flex items-center justify-end w-full">
         <span className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 [font-family:'Jost',Helvetica] font-medium text-black text-lg tracking-wide">
           {currentTime}

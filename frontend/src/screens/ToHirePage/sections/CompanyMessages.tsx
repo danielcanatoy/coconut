@@ -1,4 +1,3 @@
-
 import { Input } from "../../../components/ui/input";
 import { Button } from "../../../components/ui/button";
 import { useState } from "react";
@@ -15,7 +14,7 @@ interface Message {
 const mockConversations = [
   {
     id: 1,
-    workerName: "Daniel Casutoy",
+    workerName: "Daniel Canatoy",
     workerRole: "Steelman",
     lastMessage: "Ready for work tomorrow",
     timestamp: "2:30 PM",
@@ -39,7 +38,7 @@ const mockConversations = [
 const mockMessages: Message[] = [
   {
     id: 1,
-    sender: "Daniel Casutoy",
+    sender: "Daniel Canatoy",
     senderRole: "Steelman",
     timestamp: "2:30 PM",
     content: "Ready for work tomorrow",
@@ -55,7 +54,7 @@ const mockMessages: Message[] = [
   },
   {
     id: 3,
-    sender: "Daniel Casutoy",
+    sender: "Daniel Canatoy",
     senderRole: "Steelman",
     timestamp: "2:40 PM",
     content: "Perfect, I'll be there on time",
@@ -92,8 +91,12 @@ export const CompanyMessages = (): JSX.Element => {
                   : "bg-white hover:bg-gray-100"
               }`}
             >
-              <p className="font-semibold text-black text-sm">{conv.workerName}</p>
-              <p className="normal text-gray-600 text-xs mb-1">{conv.workerRole}</p>
+              <p className="font-semibold text-black text-sm">
+                {conv.workerName}
+              </p>
+              <p className="normal text-gray-600 text-xs mb-1">
+                {conv.workerRole}
+              </p>
               <p className="normal text-gray-700 text-xs truncate">
                 {conv.lastMessage}
               </p>
@@ -134,9 +137,7 @@ export const CompanyMessages = (): JSX.Element => {
             >
               <div
                 className={`max-w-xs p-4 rounded-lg ${
-                  msg.isCompanyMessage
-                    ? "bg-[#ff9d00]"
-                    : "bg-gray-200"
+                  msg.isCompanyMessage ? "bg-[#ff9d00]" : "bg-gray-200"
                 }`}
               >
                 <p className="[font-family:'Jost',Helvetica] font-semibold text-black text-sm mb-1">

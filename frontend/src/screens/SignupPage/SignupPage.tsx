@@ -45,9 +45,16 @@ export const SignupPage = (): JSX.Element => {
       // ✅ AUTO LOGIN: save token & role
       localStorage.setItem("token", data.token);
       localStorage.setItem("role", data.user.role);
+      localStorage.setItem("email", data.user.email);
 
       // ✅ DIRECT DASHBOARD REDIRECT
-      navigate(data.user.role === "worker" ? "/worker" : "/to-hire");
+      navigate(data.user.role === "worker" ? "/worker" : "/to-hire", {
+        state: {
+          email,
+          password,
+          userType,
+        },
+      });
     } catch (error) {
       console.error(error);
       alert("Server error. Please try again.");

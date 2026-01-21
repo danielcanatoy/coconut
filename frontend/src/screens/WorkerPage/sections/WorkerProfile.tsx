@@ -34,6 +34,9 @@ interface WorkerProfileProps {
 export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
   const location = useLocation();
   const { email, password, userType } = location.state || {};
+
+  console.log(location.state);
+  console.log(email, "EMAIL");
   const skillOptions = [
     "Carpenter",
     "Mason",
@@ -130,9 +133,14 @@ export const WorkerProfile = ({ onClose }: WorkerProfileProps): JSX.Element => {
 
     const data = await res.json();
 
-    if (data.created) alert("Profile created!");
-    if (data.updated) alert("Profile updated!");
+    if (!res.ok) {
+      throw new Error(data.message);
+    } else {
+      alert("Changes saved!");
+    }
 
+    // ✅ save JWT
+    localStorage.setItem("token", data.token);
     window.location.reload();
   };
 
