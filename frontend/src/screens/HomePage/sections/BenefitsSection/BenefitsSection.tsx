@@ -52,7 +52,7 @@ export const BenefitsSection = (): JSX.Element => {
                 >
                   {activeIndex === index && (
                     <img
-                      className="w-[22px] h-[27px]"
+                      className="w-max-[22px] h-max-[27px]"
                       alt="Polygon"
                       src="/polygon-1.svg"
                     />
@@ -69,14 +69,14 @@ export const BenefitsSection = (): JSX.Element => {
           <div className="flex flex-col items-center lg:items-end justify-center">
             <div className="relative w-full max-w-[725px] flex flex-col items-center lg:items-end">
               <img
-                className="w-full h-auto object-cover mt-40"
+                className="w-full max-h-[420px] object-cover mt-40"
                 alt={benefitItemsData[activeIndex].title}
                 src={benefitItemsData[activeIndex].image}
               />
 
               <Card className="absolute bottom-0 left-1/2 transform -translate-x-1/2 lg:left-auto lg:right-0 lg:translate-x-0 w-full max-w-[356px] bg-[#ff9d00] border-none rounded-none p-4">
                 <CardContent>
-                  <p className="[font-family:'Jost',Helvetica] font-medium text-black text-[1.9rem] text-center tracking-[0] leading-[normal]">
+                  <p className="[font-family:'Jost',Helvetica] font-medium text-black text-[1.5rem] text-center tracking-[0] leading-[normal]">
                     {benefitItemsData[activeIndex].description}
                   </p>
                 </CardContent>

@@ -8,17 +8,17 @@ export const ProjectTypesSection = (): JSX.Element => {
      
     },
     {
-      title: "Renovation\n&\nRepair",
+      title: "Renovation & Repair",
       backgroundImage: "/rectangle-2.png",
      
     },
     {
-      title: "Commercial\nProjects",
+      title: "Commercial Projects",
       backgroundImage: "/rectangle-27.png",
      
     },
     {
-      title: "Residential\nProjects",
+      title: "Residential Projects",
       backgroundImage: "/rectangle-28.png",
       
     },
@@ -44,7 +44,7 @@ export const ProjectTypesSection = (): JSX.Element => {
 
             {/* Text */}
             <div className="relative z-10 flex flex-col items-center justify-center h-full px-6">
-              <h3 className="[font-family:'Jost',Helvetica] font-normal text-white text-[32px] text-center whitespace-pre-line transition-transform duration-300 group-hover:scale-105">
+              <h3 className="[font-family:'Jost',Helvetica] font-normal text-white text-[24px]  text-center whitespace-pre-line transition-transform duration-300 group-hover:scale-105">
                 {project.title}
               </h3>
 
