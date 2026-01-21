@@ -12,12 +12,12 @@ const benefitItemsData = [
     title: "Job\nOpportunities",
     description:
       "Workers can discover new job opportunities tailored to their skills.",
-    image: "/vector.png",
+    image: "/Rectangle 131.png",
   },
   {
     title: "Efficient\nHiring",
     description: "Companies can hire qualified workers faster and smarter.",
-    image: "/vector.png",
+    image: "/Rectangle 132.png",
   },
 ];
 

@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react"; // if using lucide icons
+
 
 export const ProjectTypesSection = (): JSX.Element => {
   const projectTypes = [
@@ -48,11 +48,7 @@ export const ProjectTypesSection = (): JSX.Element => {
                 {project.title}
               </h3>
 
-              {/* Arrow Icon */}
-              <ArrowRight
-                className="mt-4 text-white opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-1"
-                size={28}
-              />
+              
             </div>
           </button>
         ))}
