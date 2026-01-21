@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react"; // if using lucide icons
+
 
 export const ProjectTypesSection = (): JSX.Element => {
   const projectTypes = [
@@ -8,17 +8,17 @@ export const ProjectTypesSection = (): JSX.Element => {
      
     },
     {
-      title: "Renovation\n&\nRepair",
+      title: "Renovation & Repair",
       backgroundImage: "/rectangle-2.png",
      
     },
     {
-      title: "Commercial\nProjects",
+      title: "Commercial Projects",
       backgroundImage: "/rectangle-27.png",
      
     },
     {
-      title: "Residential\nProjects",
+      title: "Residential Projects",
       backgroundImage: "/rectangle-28.png",
       
     },
@@ -44,15 +44,11 @@ export const ProjectTypesSection = (): JSX.Element => {
 
             {/* Text */}
             <div className="relative z-10 flex flex-col items-center justify-center h-full px-6">
-              <h3 className="[font-family:'Jost',Helvetica] font-normal text-white text-[32px] text-center whitespace-pre-line transition-transform duration-300 group-hover:scale-105">
+              <h3 className="[font-family:'Jost',Helvetica] font-normal text-white text-[24px]  text-center whitespace-pre-line transition-transform duration-300 group-hover:scale-105">
                 {project.title}
               </h3>
 
-              {/* Arrow Icon */}
-              <ArrowRight
-                className="mt-4 text-white opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-1"
-                size={28}
-              />
+              
             </div>
           </button>
         ))}
