@@ -84,12 +84,12 @@ export const WorkerProjects = (): JSX.Element => {
           >
             <CardContent className="p-6">
               <div className="mb-4 text-center">
-                <p className="font-bold text-black text-xl">{project.company}</p>
-                <p className="font-normal text-black text-lg">{project.role}</p>
+                <p className="font-bold text-black text-2xl">{project.company}</p>
+                <p className="font-semibold text-black text-lg">{project.role}</p>
               </div>
 
               {selectedTab === "active" && (
-                <div className="grid grid-cols-2 gap-4 text-xs mb-4 bg-white/70 p-4 rounded-md">
+                <div className="grid grid-cols-2 gap-4  mb-4 bg-white/70 p-4 rounded-md">
                   <div className="flex flex-col justify-between h-full">
                     <div>
                       <p className="font-semibold text-black">Time in:</p>

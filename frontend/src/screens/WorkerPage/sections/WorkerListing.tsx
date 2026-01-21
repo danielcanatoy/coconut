@@ -41,7 +41,7 @@ export const WorkerListings = (): JSX.Element => {
 
   return (
     <div className="space-y-6 px-6 py-4">
-      <h1 className="text-2xl font-bold [font-family:'Jost',Helvetica] text-black mb-4">
+      <h1 className=" font-bold [font-family:'Jost',Helvetica] text-black mb-4">
         Company Listings
       </h1>
 
@@ -55,7 +55,7 @@ export const WorkerListings = (): JSX.Element => {
               <p className="text-2xl font-bold [font-family:'Jost',Helvetica] text-black mb-2">
                 {listing.company}
               </p>
-              <p className="text-lg font-normal [font-family:'Jost',Helvetica] text-black mb-4">
+              <p className="text-lg font-semibold [font-family:'Jost',Helvetica] text-black mb-4">
                 {listing.role}
               </p>
 
@@ -63,20 +63,20 @@ export const WorkerListings = (): JSX.Element => {
               <div className="grid grid-cols-2 gap-4 mb-4 bg-white p-4 rounded-lg text-left flex-1">
                 {/* First column */}
                 <div className="flex flex-col justify-start space-y-1">
-                  <p className="text-sm font-normal [font-family:'Jost',Helvetica] text-black">
+                  <p className=" font-normal [font-family:'Jost',Helvetica] text-black">
                     Time In: {listing.timeIn}
                   </p>
-                  <p className="text-sm font-normal [font-family:'Jost',Helvetica] text-black">
+                  <p className=" font-normal [font-family:'Jost',Helvetica] text-black">
                     Time Out: {listing.timeOut}
                   </p>
                 </div>
 
                 {/* Second column */}
                 <div className="flex flex-col justify-start space-y-1">
-                  <p className="text-sm font-normal [font-family:'Jost',Helvetica] text-black">
+                  <p className=" font-normal [font-family:'Jost',Helvetica] text-black">
                     Duration: {listing.duration}
                   </p>
-                  <p className="text-sm font-normal [font-family:'Jost',Helvetica] text-black">
+                  <p className=" font-normal [font-family:'Jost',Helvetica] text-black">
                     Salary: {listing.salary}
                   </p>
                 </div>
