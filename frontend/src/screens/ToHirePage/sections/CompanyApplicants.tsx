@@ -1,31 +1,35 @@
 import { Card, CardContent } from "../../../components/ui/card";
 import { Button } from "../../../components/ui/button";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import axios from "axios";
 
-interface Application {
-  id: number;
-  listing_id: number;
-  worker_id: number;
-  status: "pending" | "accepted" | "rejected";
+interface Applicant {
+  application_id: number;
+  first_name: string;
+  last_name: string;
+  job_title: string;
+  status: "Pending" | "Approved" | "Rejected";
   applied_at: string;
-  approved_at?: string;
-  rejected_at?: string;
+  mobile_number: string;
+  skills: string;
+  experience: string;
 }
 
 export const CompanyApplicants = (): JSX.Element => {
-  const [currentTime, setCurrentTime] = useState("");
-  const [panelVisible, setPanelVisible] = useState(false);
-  const [selectedStatus, setSelectedStatus] = useState<"accepted" | "rejected">(
-    "accepted",
+  const [currentTime, setCurrentTime] = useState<string>("");
+  const [applicants, setApplicants] = useState<Applicant[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<"Approved" | "Rejected">(
+    "Approved",
   );
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [panelVisible, setPanelVisible] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  /* =========================
-     CLOCK
-  ========================= */
+  const API_URL = "http://localhost:5000/api/company";
+  const token = localStorage.getItem("token");
+
+  // 1. Clock Logic
   useEffect(() => {
-    const tick = () => {
+    const intervalId = setInterval(() => {
       setCurrentTime(
         new Date().toLocaleTimeString("en-US", {
           hour: "2-digit",
@@ -34,216 +38,204 @@ export const CompanyApplicants = (): JSX.Element => {
           hour12: true,
         }),
       );
-    };
-    tick();
-    const i = setInterval(tick, 1000);
-    return () => clearInterval(i);
+    }, 1000);
+    return () => clearInterval(intervalId);
   }, []);
 
-  /* =========================
-     FETCH APPLICATIONS
-  ========================= */
-  useEffect(() => {
-    fetch("http://localhost:5000/api/company/applicants", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((res) => res.json())
-      .then((data) => setApplications(data))
-      .catch((err) => console.error(err));
-  }, []);
+  // 2. Fetch Applicants (Isang version na lang at may Error Handling)
+  const fetchApplicants = useCallback(async () => {
+    if (!token) {
+      console.error("No token found");
+      setLoading(false);
+      return;
+    }
 
-  /* =========================
-     APPROVE / REJECT
-  ========================= */
-  const updateStatus = async (
-    applicationId: number,
-    status: "accepted" | "rejected",
-  ) => {
-    setLoading(true);
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/company/applications/${applicationId}/status`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ status }),
-        },
-      );
-
-      if (!res.ok) throw new Error("Failed");
-
-      setApplications((prev) =>
-        prev.map((app) =>
-          app.id === applicationId
-            ? {
-                ...app,
-                status,
-                approved_at:
-                  status === "accepted"
-                    ? new Date().toISOString()
-                    : app.approved_at,
-                rejected_at:
-                  status === "rejected"
-                    ? new Date().toISOString()
-                    : app.rejected_at,
-              }
-            : app,
-        ),
-      );
-    } catch {
-      alert("Failed to update application");
+      setLoading(true);
+      const response = await axios.get(`${API_URL}/applicants`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setApplicants(Array.isArray(response.data) ? response.data : []);
+    } catch (err: any) {
+      if (err.response?.status === 401) {
+        console.error("Unauthorized: Token might be .");
+      } else {
+        console.error("Fetch Error:", err.message);
+      }
     } finally {
       setLoading(false);
     }
+  }, [token, API_URL]);
+
+  useEffect(() => {
+    fetchApplicants();
+  }, [fetchApplicants]);
+
+  // 3. Decision Handler
+  const handleDecision = async (
+    id: number,
+    decision: "Approved" | "Rejected",
+  ) => {
+    try {
+      const response = await axios.put(
+        `${API_URL}/applications/${id}/status`,
+        { status: decision },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      if (response.status === 200) {
+        setApplicants((prev) =>
+          prev.map((app) =>
+            app.application_id === id ? { ...app, status: decision } : app,
+          ),
+        );
+        alert(`Worker application has been ${decision}!`);
+      }
+    } catch (error) {
+      console.error("Decision error:", error);
+      alert("Failed to update status.");
+    }
   };
 
-  /* =========================
-     FILTERS
-  ========================= */
-  const pending = applications.filter((a) => a.status === "pending");
-  const accepted = applications.filter((a) => a.status === "accepted");
-  const rejected = applications.filter((a) => a.status === "rejected");
-  const history = selectedStatus === "accepted" ? accepted : rejected;
+  const pendingApplicants = applicants.filter(
+    (a) => a.status.toLowerCase() === "pending",
+  );
+  const historyApplicants = applicants.filter(
+    (a) => a.status.toLowerCase() === selectedStatus.toLowerCase(),
+  );
 
   return (
-    <>
-      <div className="flex flex-col gap-6">
-        <div className="flex justify-end">
-          <span className="bg-white px-4 py-2 rounded-lg shadow border">
-            {currentTime}
-          </span>
-        </div>
-
-        <div>
-          <div className="flex justify-between mb-4">
-            <h1 className="bg-[#FF9D00] px-6 py-2 rounded-full">
-              Job Applications
-            </h1>
-            <button
-              onClick={() => setPanelVisible(true)}
-              className="bg-white px-6 py-2 rounded-full shadow"
-            >
-              Approval History
-            </button>
-          </div>
-
-          <Card>
-            <CardContent className="p-6 space-y-3">
-              {pending.map((app) => (
-                <div
-                  key={app.id}
-                  className="border p-4 rounded-xl flex justify-between"
-                >
-                  <div>
-                    <p className="font-bold">Application #{app.id}</p>
-                    <p>Worker ID: {app.worker_id}</p>
-                    <p>Listing ID: {app.listing_id}</p>
-                    <p className="text-xs text-gray-500">
-                      Applied: {app.applied_at}
-                    </p>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button
-                      disabled={loading}
-                      onClick={() => updateStatus(app.id, "accepted")}
-                      className="bg-green-600 text-white"
-                    >
-                      Approve
-                    </Button>
-                    <Button
-                      disabled={loading}
-                      onClick={() => updateStatus(app.id, "rejected")}
-                      className="bg-red-500 text-white"
-                    >
-                      Reject
-                    </Button>
-                  </div>
-                </div>
-              ))}
-
-              {pending.length === 0 && (
-                <div className="text-center text-gray-500">
-                  No pending applications
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+    <div className="relative flex flex-col gap-6 p-4">
+      <div className="flex items-center justify-end w-full">
+        <span className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 font-medium text-lg tabular-nums">
+          {currentTime || "00:00:00 AM"}
+        </span>
       </div>
 
-      {/* APPROVAL HISTORY */}
-      {panelVisible && (
-        <div
-          className="fixed inset-0 bg-black/30 flex justify-center items-center"
-          onClick={() => setPanelVisible(false)}
-        >
-          <div
-            className="bg-white rounded-xl w-full max-w-3xl"
-            onClick={(e) => e.stopPropagation()}
+      <div className="w-full">
+        <div className="flex items-center justify-between mb-4">
+          <h1 className="font-semibold text-white text-lg bg-[#FF9D00] px-6 py-2 rounded-full shadow-md">
+            Job Applicants
+          </h1>
+          <button
+            onClick={() => setPanelVisible(true)}
+            className="text-lg px-6 py-2 rounded-full bg-white shadow-md hover:bg-gray-50 transition-all font-medium"
           >
-            <div className="bg-[#FF9D00] p-6 flex justify-between">
-              <h3>Approval History</h3>
+            Approval History
+          </button>
+        </div>
+
+        <Card className="bg-white border-none rounded-[20px] shadow-lg w-full min-h-[300px]">
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              {loading ? (
+                <div className="flex justify-center py-20 text-[#FF9D00]">
+                  Loading...
+                </div>
+              ) : pendingApplicants.length > 0 ? (
+                pendingApplicants.map((applicant) => (
+                  <div
+                    key={applicant.application_id}
+                    className="flex flex-wrap items-center justify-between p-5 border border-gray-100 rounded-2xl hover:border-[#FF9D00]/30 transition-all shadow-sm"
+                  >
+                    <div className="flex-1 min-w-[250px]">
+                      <p className="font-bold text-gray-900 text-xl">
+                        {applicant.first_name} {applicant.last_name}
+                      </p>
+                      <p className="text-gray-600 font-medium mt-1">
+                        Applying for:{" "}
+                        <span className="text-[#FF9D00]">
+                          {applicant.job_title}
+                        </span>
+                      </p>
+                      <div className="flex gap-4 mt-2 text-sm text-gray-500">
+                        <span>Experience: {applicant.experience}</span>
+                        <span>•</span>
+                        <span>
+                          Applied:{" "}
+                          {new Date(applicant.applied_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={() =>
+                          handleDecision(applicant.application_id, "Approved")
+                        }
+                        className="bg-green-600 hover:bg-green-700 text-white rounded-xl px-6 font-bold"
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        onClick={() =>
+                          handleDecision(applicant.application_id, "Rejected")
+                        }
+                        className="bg-red-500 hover:bg-red-600 text-white rounded-xl px-6 font-bold"
+                      >
+                        Reject
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+                  No pending applicants
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* HISTORY MODAL */}
+      {panelVisible && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-[24px] shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden flex flex-col">
+            <div className="bg-[#FF9D00] p-6 flex items-center justify-between text-white">
+              <h3 className="text-2xl font-bold">Approval History</h3>
               <div className="flex gap-2">
                 <button
-                  onClick={() => setSelectedStatus("accepted")}
-                  className={`px-4 py-2 rounded ${
-                    selectedStatus === "accepted"
-                      ? "bg-green-500 text-white"
-                      : "bg-white"
-                  }`}
+                  onClick={() => setSelectedStatus("Approved")}
+                  className={`px-5 py-2 rounded-full text-sm font-bold ${selectedStatus === "Approved" ? "bg-green-500 text-white" : "bg-white text-black"}`}
                 >
-                  Accepted ({accepted.length})
+                  Approved
                 </button>
                 <button
-                  onClick={() => setSelectedStatus("rejected")}
-                  className={`px-4 py-2 rounded ${
-                    selectedStatus === "rejected"
-                      ? "bg-red-500 text-white"
-                      : "bg-white"
-                  }`}
+                  onClick={() => setSelectedStatus("Rejected")}
+                  className={`px-5 py-2 rounded-full text-sm font-bold ${selectedStatus === "Rejected" ? "bg-red-500 text-white" : "bg-white text-black"}`}
                 >
-                  Rejected ({rejected.length})
+                  Rejected
                 </button>
               </div>
             </div>
-
-            <CardContent className="p-6">
+            <div className="p-6 overflow-y-auto flex-1">
               <table className="w-full text-left">
-                <thead>
+                <thead className="border-b-2">
                   <tr>
-                    <th>ID</th>
-                    <th>Worker</th>
-                    <th>Listing</th>
-                    <th>Date</th>
+                    <th className="py-4 px-4 text-gray-500">Name</th>
+                    <th className="py-4 px-4 text-gray-500">Position</th>
+                    <th className="py-4 px-4 text-gray-500">Date Applied</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {history.map((app) => (
-                    <tr key={app.id}>
-                      <td>{app.id}</td>
-                      <td>{app.worker_id}</td>
-                      <td>{app.listing_id}</td>
-                      <td>
-                        {selectedStatus === "accepted"
-                          ? app.approved_at
-                          : app.rejected_at}
+                  {historyApplicants.map((h) => (
+                    <tr key={h.application_id} className="border-b">
+                      <td className="py-4 px-4 font-bold">
+                        {h.first_name} {h.last_name}
+                      </td>
+                      <td className="py-4 px-4">{h.job_title}</td>
+                      <td className="py-4 px-4">
+                        {new Date(h.applied_at).toLocaleDateString()}
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
-            </CardContent>
-
-            <div className="p-4">
+            </div>
+            <div className="p-6 border-t">
               <Button
                 onClick={() => setPanelVisible(false)}
-                className="w-full bg-[#FF9D00] text-white"
+                className="w-full bg-gray-900 text-white"
               >
                 Close
               </Button>
@@ -251,6 +243,6 @@ export const CompanyApplicants = (): JSX.Element => {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 };

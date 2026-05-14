@@ -77,7 +77,7 @@ export const WorkerPage = (): JSX.Element => {
                 Listings
               </button>
 
-              <button
+              {/* <button
                 onClick={() => setActiveSection("messages")}
                 className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-lg transition-colors ${
                   activeSection === "messages"
@@ -86,7 +86,7 @@ export const WorkerPage = (): JSX.Element => {
                 }`}
               >
                 Messages
-              </button>
+              </button> */}
             </div>
           </div>
 

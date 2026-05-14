@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 
 interface Listing {
   id: number;
-  company: string;
+  employer_id: number;
   position: string;
-  inNeedOf: string;
-  timeIn: string;
-  timeOut: string;
+  in_need_of: string;
+  time_in: string;
+  time_out: string;
   salary: string;
-  workDays: number;
+  work_days: number;
   progress: number;
   location: string;
 }
@@ -40,31 +40,27 @@ export const CompanyListings = (): JSX.Element => {
     location: "",
   });
 
-  useEffect(() => {
-    fetch("http://localhost:5000/api/company/listings", {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Unauthorized");
-        }
-        return res.json();
-      })
-      .then((data) => {
-        if (Array.isArray(data)) {
-          setListings(data);
-        } else {
-          setListings([]);
-        }
-      })
-      .catch((err) => {
-        console.error("Failed to load Listings", err);
-        setListings([]);
+  // 1. Fetch Listings
+  const fetchListings = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/company/listings", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
       });
+      if (!res.ok) throw new Error("Unauthorized");
+      const data = await res.json();
+      setListings(Array.isArray(data) ? data : []);
+    } catch (err) {
+      console.error("Failed to load Listings", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchListings();
   }, []);
 
+  // 2. Real-time Clock
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
@@ -83,12 +79,10 @@ export const CompanyListings = (): JSX.Element => {
   }, []);
 
   const handleInputChange = (field: keyof NewListing, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
+  // 3. Create Listing Function
   const handleCreateListing = async () => {
     try {
       const res = await fetch("http://localhost:5000/api/company/listings", {
@@ -102,18 +96,9 @@ export const CompanyListings = (): JSX.Element => {
 
       if (!res.ok) throw new Error("Failed to create listing");
 
-      const updated = await fetch(
-        "http://localhost:5000/api/company/listings",
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        },
-      ).then((r) => r.json());
-
-      setListings(updated);
+      alert("Job posted successfully!");
+      fetchListings(); // Refresh list
       setShowCreateForm(false);
-
       setFormData({
         position: "",
         inNeedOf: "",
@@ -125,30 +110,24 @@ export const CompanyListings = (): JSX.Element => {
       });
     } catch (err) {
       console.error(err);
-      alert("Failed to create listing");
+      alert("Error: Check if all fields are filled.");
     }
   };
 
-  const baseButtonStyle =
-    "h-auto !px-8 !py-3 !text-2xl !font-normal rounded-full inline-flex items-center justify-center leading-none [font-family:'Jost',Helvetica] shadow-[0px_4px_8px_rgba(0,0,0,0.25)] transition-transform hover:scale-105";
-
-  const activePill =
-    "!bg-[#FF9D00] !text-black hover:!bg-[#ff8f00] border border-transparent";
-  const inactivePill =
-    "!bg-white !text-black hover:!bg-gray-100 border border-gray-200";
-
   return (
     <div className="space-y-8">
+      {/* Clock Section */}
       <div className="flex justify-end">
-        <span className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 [font-family:'Jost',Helvetica] font-medium text-black text-lg tracking-wide">
+        <span className="bg-white px-4 py-2 rounded-lg shadow-sm border border-gray-100 font-['Jost'] font-medium text-black text-lg">
           {currentTime}
         </span>
       </div>
 
+      {/* Navigation Buttons */}
       <div className="flex justify-end gap-4">
         <Button
           onClick={() => setShowCreateForm(false)}
-          className={`[font-family:'Jost',Helvetica] font-normal text-black text-lg px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)] transition-all cursor-pointer hover:shadow-[0px_6px_12px_rgba(0,0,0,0.3)] ${
+          className={`font-['Jost'] font-normal text-black text-lg px-6 py-2 rounded-full shadow-md transition-all ${
             !showCreateForm ? "bg-[#FF9D00]" : "bg-white"
           }`}
         >
@@ -156,7 +135,7 @@ export const CompanyListings = (): JSX.Element => {
         </Button>
         <Button
           onClick={() => setShowCreateForm(true)}
-          className={`[font-family:'Jost',Helvetica] font-normal text-black text-lg px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)] transition-all cursor-pointer hover:shadow-[0px_6px_12px_rgba(0,0,0,0.3)] ${
+          className={`font-['Jost'] font-normal text-black text-lg px-6 py-2 rounded-full shadow-md transition-all ${
             showCreateForm ? "bg-[#FF9D00]" : "bg-white"
           }`}
         >
@@ -165,69 +144,52 @@ export const CompanyListings = (): JSX.Element => {
       </div>
 
       {!showCreateForm ? (
-        <div className="grid grid-cols-2 gap-6 pt-4">
+        /* Listings Display */
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
           {listings.map((listing) => {
             const isOpen = openListingId === listing.id;
-
             return (
               <Card
                 key={listing.id}
-                className={`
-                  bg-[#ff9d00] rounded-2xl shadow-md text-black
-                  transition-transform duration-200 border-none
-                  ${isOpen ? "scale-100" : "hover:scale-[1.02]"}
-                `}
+                className={`bg-[#ff9d00] rounded-2xl shadow-md text-black border-none transition-all ${
+                  isOpen ? "scale-100" : "hover:scale-[1.01]"
+                }`}
               >
                 <CardContent className="p-5 space-y-3">
                   <h3
                     onClick={() => setOpenListingId(isOpen ? null : listing.id)}
-                    className="text-xl font-extrabold text-center cursor-pointer hover:underline"
+                    className="text-xl font-extrabold text-center cursor-pointer hover:underline uppercase"
                   >
                     {listing.position}
                   </h3>
 
                   <div
-                    className={`
-                      overflow-hidden
-                      transition-[max-height] duration-500 ease-in-out
-                      ${isOpen ? "max-h-96" : "max-h-0"}
-                    `}
+                    className={`overflow-hidden transition-all duration-500 ${isOpen ? "max-h-96" : "max-h-0"}`}
                   >
-                    <div className="bg-white rounded-2xl px-5 py-4 mt-2 space-y-2 text-sm">
-                      <p className="font-semibold">In need of:</p>
-                      <p className="font-bold text-[#ff9d00] text-lg">
-                        {listing.inNeedOf}
-                      </p>
-                      <p>
-                        Time in:{" "}
-                        <span className="font-semibold text-[#ff9d00]">
-                          {listing.timeIn}
+                    <div className="bg-white rounded-2xl px-5 py-4 mt-2 space-y-2 text-sm shadow-inner">
+                      <p className="font-semibold">
+                        In need of:{" "}
+                        <span className="text-[#ff9d00]">
+                          {listing.in_need_of}
                         </span>
                       </p>
                       <p>
-                        Time out:{" "}
-                        <span className="font-semibold text-[#ff9d00]">
-                          {listing.timeOut}
+                        Time:{" "}
+                        <span className="font-semibold">
+                          {listing.time_in} - {listing.time_out}
                         </span>
                       </p>
                       <p>
                         Salary:{" "}
-                        <span className="font-semibold text-[#ff9d00]">
-                          {listing.salary}
-                        </span>
+                        <span className="font-semibold">₱{listing.salary}</span>
                       </p>
                       <p>
                         Progress:{" "}
-                        <span className="font-semibold text-[#ff9d00]">
-                          {listing.progress}/{listing.workDays} days
+                        <span className="font-semibold">
+                          {listing.progress || 0}/{listing.work_days} days
                         </span>
                       </p>
-                      <p>
-                        Location:{" "}
-                        <span className="font-semibold text-[#ff9d00]">
-                          {listing.location}
-                        </span>
-                      </p>
+                      <p>📍 {listing.location}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -236,124 +198,65 @@ export const CompanyListings = (): JSX.Element => {
           })}
         </div>
       ) : (
-        <div className="flex flex-col items-center mt-0 pt-0 space-y-4 relative -top-6">
-          <div className="bg-[#ff9d00] rounded-[3rem] p-6 shadow-2xl w-[650px]">
-            <div className="text-center mb-6">
-              <input
-                type="text"
-                placeholder="Title"
-                value={formData.position}
-                onChange={(e) => handleInputChange("position", e.target.value)}
-                className="bg-transparent text-center text-3xl font-normal text-gray-800 placeholder-gray-700/70 focus:outline-none w-full tracking-wide"
-              />
-            </div>
+        /* Create Form Section */
+        <div className="flex flex-col items-center space-y-6">
+          <div className="bg-[#ff9d00] rounded-[3rem] p-6 shadow-2xl w-full max-w-[650px]">
+            <input
+              type="text"
+              placeholder="Title (e.g. Carpenter Needed)"
+              value={formData.position}
+              onChange={(e) => handleInputChange("position", e.target.value)}
+              className="bg-transparent text-center text-3xl font-bold text-gray-800 placeholder-gray-700/50 focus:outline-none w-full mb-4"
+            />
 
-            <div className="bg-white rounded-[2.5rem] p-10 pb-16 space-y-8 min-h-[500px] shadow-inner">
-              <div className="text-center space-y-3">
-                <h3 className="text-2xl font-bold text-black">In need of:</h3>
-
-                <div className="relative inline-block w-3/4">
-                  <input
-                    type="text"
-                    placeholder="Job Title (Quantity)"
-                    value={formData.inNeedOf}
-                    onChange={(e) =>
-                      handleInputChange("inNeedOf", e.target.value)
-                    }
-                    className="w-full text-center text-gray-600 text-2xl border-b-2 border-gray-300 focus:border-[#ff9d00] focus:outline-none pb-2 font-medium"
-                  />
-                  <span className="absolute right-0 bottom-3 text-gray-400 cursor-pointer hover:text-gray-600 transition">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={2}
-                      stroke="currentColor"
-                      className="w-6 h-6"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10"
-                      />
-                    </svg>
-                  </span>
-                </div>
+            <div className="bg-white rounded-[2.5rem] p-8 space-y-6 shadow-inner">
+              <div className="text-center">
+                <h3 className="text-xl font-bold text-black mb-2">
+                  In need of:
+                </h3>
+                <input
+                  type="text"
+                  placeholder="Job Title (Quantity)"
+                  value={formData.inNeedOf}
+                  onChange={(e) =>
+                    handleInputChange("inNeedOf", e.target.value)
+                  }
+                  className="w-3/4 text-center text-2xl border-b-2 border-gray-300 focus:border-[#ff9d00] focus:outline-none pb-1"
+                />
               </div>
 
-              <div className="space-y-5 text-lg font-semibold text-black mt-0 px-8">
-                <div className="flex items-center gap-4">
-                  <span className="min-w-[100px] text-gray-800">Time in :</span>
-                  <input
-                    type="text"
-                    value={formData.timeIn}
-                    onChange={(e) =>
-                      handleInputChange("timeIn", e.target.value)
-                    }
-                    className="flex-1 border-b-2 border-gray-300 focus:outline-none focus:border-[#ff9d00] py-1 text-gray-700"
-                  />
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <span className="min-w-[100px] text-gray-800">
-                    Time out :
-                  </span>
-                  <input
-                    type="text"
-                    value={formData.timeOut}
-                    onChange={(e) =>
-                      handleInputChange("timeOut", e.target.value)
-                    }
-                    className="flex-1 border-b-2 border-gray-300 focus:outline-none focus:border-[#ff9d00] py-1 text-gray-700"
-                  />
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <span className="min-w-[100px] text-gray-800">Salary :</span>
-                  <input
-                    type="text"
-                    value={formData.salary}
-                    onChange={(e) =>
-                      handleInputChange("salary", e.target.value)
-                    }
-                    className="flex-1 border-b-2 border-gray-300 focus:outline-none focus:border-[#ff9d00] py-1 text-gray-700"
-                  />
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <span className="min-w-[160px] text-gray-800">
-                    Total Work Days :
-                  </span>
-                  <input
-                    type="text"
-                    value={formData.workDays}
-                    onChange={(e) =>
-                      handleInputChange("workDays", e.target.value)
-                    }
-                    className="flex-1 border-b-2 border-gray-300 focus:outline-none focus:border-[#ff9d00] py-1 text-gray-700"
-                  />
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <span className="min-w-[100px] text-gray-800">
-                    Location :
-                  </span>
-                  <input
-                    type="text"
-                    value={formData.location}
-                    onChange={(e) =>
-                      handleInputChange("location", e.target.value)
-                    }
-                    className="flex-1 border-b-2 border-gray-300 focus:outline-none focus:border-[#ff9d00] py-1 text-gray-700"
-                  />
-                </div>
+              <div className="space-y-4 px-4">
+                {[
+                  { label: "Time in", key: "timeIn" },
+                  { label: "Time out", key: "timeOut" },
+                  { label: "Salary", key: "salary" },
+                  { label: "Total Work Days", key: "workDays" },
+                  { label: "Location", key: "location" },
+                ].map((field) => (
+                  <div key={field.key} className="flex items-center gap-4">
+                    <span className="min-w-[140px] font-bold text-gray-700">
+                      {field.label} :
+                    </span>
+                    <input
+                      type="text"
+                      value={formData[field.key as keyof NewListing]}
+                      onChange={(e) =>
+                        handleInputChange(
+                          field.key as keyof NewListing,
+                          e.target.value,
+                        )
+                      }
+                      className="flex-1 border-b-2 border-gray-200 focus:outline-none focus:border-[#ff9d00] py-1"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
           <button
             onClick={handleCreateListing}
-            className="bg-green-300 text-green-900 font-bold py-3 px-16 rounded-full shadow-lg hover:bg-[#50C878] transition text-xl transform hover:scale-105"
+            className="bg-green-400 text-white font-bold py-3 px-20 rounded-full shadow-lg hover:bg-green-500 transition-all text-xl transform hover:scale-105"
           >
             Post!
           </button>

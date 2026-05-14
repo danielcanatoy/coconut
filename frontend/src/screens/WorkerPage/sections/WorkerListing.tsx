@@ -1,44 +1,48 @@
-// File: ./sections/WorkerListings.tsx
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "../../../components/ui/card";
-import { useEffect, useState } from "react";
 
 interface Listing {
   id: number;
-  position: string;
+  employer_id: number;
+  company_name: string;
+  in_need_of: string;
   time_in: string;
   time_out: string;
-  salary: number;
+  duration: string;
+  salary: string;
   location: string;
 }
 
 export const WorkerListings = (): JSX.Element => {
-  /* =========================
-     STATE: REAL LISTINGS
-  ========================= */
-  const [companyListings, setCompanyListings] = useState<Listing[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [listings, setListings] = useState<Listing[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  /* =========================
-     FETCH LISTINGS FROM DB
-  ========================= */
   useEffect(() => {
-    fetch("http://localhost:5000/api/company/public-listings", {
+    fetch("http://localhost:5000/api/worker/listings", {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
       .then((res) => res.json())
-      .then((data) => setCompanyListings(data))
-      .catch((err) => console.error("FETCH LISTINGS ERROR:", err));
+      .then((data) => {
+        // ✅ Safe check — never set undefined
+        setListings(Array.isArray(data.data) ? data.data : []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching listings:", err);
+        setListings([]); // ✅ Always fallback to empty array
+        setLoading(false);
+      });
   }, []);
 
-  /* =========================
-     APPLY TO JOB
-  ========================= */
-  const handleApply = async (listingId: number) => {
-    setLoading(true);
+  const handleApply = async (
+    listingId: number,
+    companyName: string,
+    role: string,
+  ) => {
     try {
-      const res = await fetch("http://localhost:5000/api/worker/apply", {
+      const response = await fetch("http://localhost:5000/api/worker/apply", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -47,67 +51,102 @@ export const WorkerListings = (): JSX.Element => {
         body: JSON.stringify({ listingId }),
       });
 
-      if (!res.ok) {
-        const errText = await res.text();
-        console.error("APPLY RESPONSE ERROR:", errText);
-        throw new Error(errText);
-      }
+      const result = await response.json();
 
-      alert("Applied successfully!");
-    } catch (err) {
-      console.error(err);
-      alert("Failed to apply");
-    } finally {
-      setLoading(false);
+      if (response.ok) {
+        alert(
+          `Successfully applied for ${role} at ${companyName || "this company"}!`,
+        );
+      } else {
+        alert(`Failed to apply: ${result.message || "Please try again."}`);
+      }
+    } catch (error) {
+      console.error("Application error:", error);
+      alert("Network error. Please check your connection.");
     }
   };
 
   return (
     <div className="space-y-6 px-6 py-4">
-      <h1 className="font-bold [font-family:'Jost',Helvetica] text-black mb-4">
+      <h1 className="font-normal [font-family:'Jost',Helvetica] text-black mb-4 bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]">
         Company Listings
       </h1>
 
-      {companyListings.length === 0 && (
-        <div className="text-center text-gray-500">No available listings</div>
+      {/* ✅ Loading check FIRST — before any listings.length access */}
+      {loading ? (
+        <p className="text-center [font-family:'Jost',Helvetica]">
+          Loading available jobs...
+        </p>
+      ) : listings.length === 0 ? (
+        // ✅ Empty state AFTER loading
+        <div className="text-center py-20 opacity-50">
+          <p className="text-xl [font-family:'Jost',Helvetica]">
+            No active listings available right now.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {listings.map((listing) => (
+            <Card
+              key={listing.id}
+              className="border-none rounded-[20px] max-w-[400px] shadow-[0px_4px_12px_#00000020] bg-[#FF9D00]"
+            >
+              <CardContent className="p-6 flex flex-col text-center">
+                <p className="text-2xl font-bold [font-family:'Jost',Helvetica] text-black mb-2">
+                  {listing.company_name || `Employer #${listing.employer_id}`}
+                </p>
+
+                <p className="text-lg font-semibold [font-family:'Jost',Helvetica] text-black mb-4">
+                  {listing.in_need_of}
+                </p>
+
+                <div className="grid grid-cols-2 gap-4 mb-4 bg-white p-4 rounded-lg text-left flex-1">
+                  <div className="flex flex-col justify-start space-y-1">
+                    <p className="text-sm font-normal [font-family:'Jost',Helvetica] text-black">
+                      Time In:{" "}
+                      <span className="font-semibold">{listing.time_in}</span>
+                    </p>
+                    <p className="text-sm font-normal [font-family:'Jost',Helvetica] text-black">
+                      Time Out:{" "}
+                      <span className="font-semibold">{listing.time_out}</span>
+                    </p>
+                  </div>
+
+                  <div className="flex flex-col justify-start space-y-1">
+                    <p className="text-sm font-normal [font-family:'Jost',Helvetica] text-black">
+                      Duration:{" "}
+                      <span className="font-semibold">{listing.duration}</span>
+                    </p>
+                    <p className="text-sm font-normal [font-family:'Jost',Helvetica] text-black">
+                      Salary:{" "}
+                      <span className="font-semibold">{listing.salary}</span>
+                    </p>
+                  </div>
+
+                  <div className="col-span-2 mt-2 pt-2 border-t border-gray-100">
+                    <p className="text-sm font-normal [font-family:'Jost',Helvetica] text-black text-center">
+                      📍 {listing.location}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  className="bg-white text-black px-10 py-2 rounded-lg font-semibold mx-auto block hover:bg-gray-100 hover:shadow-md transition-all duration-200 active:scale-95"
+                  onClick={() =>
+                    handleApply(
+                      listing.id,
+                      listing.company_name,
+                      listing.in_need_of,
+                    )
+                  }
+                >
+                  Apply Now
+                </button>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       )}
-
-      <div className="grid grid-cols-2 gap-6">
-        {companyListings.map((listing) => (
-          <Card
-            key={listing.id}
-            className="border-none rounded-[20px] shadow-[0px_4px_12px_#00000020] bg-[#FF9D00]"
-          >
-            <CardContent className="p-6 flex flex-col text-center">
-              <p className="text-2xl font-bold [font-family:'Jost',Helvetica] text-black mb-2">
-                {listing.position}
-              </p>
-
-              {/* Info Grid */}
-              <div className="grid grid-cols-2 gap-4 mb-4 bg-white p-4 rounded-lg text-left flex-1">
-                <div className="flex flex-col space-y-1">
-                  <p>Time In: {listing.time_in}</p>
-                  <p>Time Out: {listing.time_out}</p>
-                </div>
-
-                <div className="flex flex-col space-y-1">
-                  <p>Salary: ₱{listing.salary}/day</p>
-                  <p>Location: {listing.location}</p>
-                </div>
-              </div>
-
-              {/* Apply button */}
-              <button
-                disabled={loading}
-                className="bg-white text-black px-10 py-2 rounded-lg font-semibold mx-auto disabled:opacity-60"
-                onClick={() => handleApply(listing.id)}
-              >
-                Apply
-              </button>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
     </div>
   );
 };

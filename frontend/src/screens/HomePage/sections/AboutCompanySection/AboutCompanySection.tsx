@@ -1,4 +1,4 @@
-import { Button } from "../../../../components/ui/button";
+
 import { Card, CardContent } from "../../../../components/ui/card";
 
 export const AboutCompanySection = (): JSX.Element => {
@@ -25,24 +25,23 @@ export const AboutCompanySection = (): JSX.Element => {
               </div>
 
               <div className="mt-6 bg-[#0c01013d] px-[17px] py-6">
-                <h3 className="text-center [-webkit-text-stroke:1px_#0000004c] [font-family:'Jost',Helvetica] font-normal text-white text-4xl tracking-[0] leading-[normal] mb-6">
-                  Who We Are
-                </h3>
+                <h3 className="text-center [text-shadow:0_2px_6px_rgba(0,0,0,0.6)] [font-family:'Jost',Helvetica] font-normal text-white text-4xl leading-normal mb-6">
+  Who We Are
+</h3>
 
-                <p className="[-webkit-text-stroke:1px_#00000026] [font-family:'Jost',Helvetica] font-normal text-[#fcfbfb] text-2xl tracking-[0] leading-[normal]">
-                  We are a digital construction service platform designed to
-                  connect trusted construction companies with skilled
-                  workers—fast, safe, and efficiently. Our goal is to simplify
-                  hiring, reduce workforce shortages, and help construction
-                  projects move forward without delays.
-                </p>
+
+                <p className="[text-shadow:0_2px_4px_rgba(0,0,0,0.55)] [font-family:'Jost',Helvetica] font-normal text-[#fcfbfb] text-2xl leading-relaxed">
+  We are a digital construction service platform designed to
+  connect trusted construction companies with skilled
+  workers—fast, safe, and efficiently. Our goal is to simplify
+  hiring, reduce workforce shortages, and help construction
+  projects move forward without delays.
+</p>
+
               </div>
 
-              <div className="flex justify-center mt-8">
-                <Button className="bg-[#ff9d00] hover:bg-[#ff9d00]/90 text-black rounded-[100px] shadow-[0px_4px_4px_#00000040] h-14 px-10 [font-family:'Jost',Helvetica] font-normal text-2xl">
-                  Learn More
-                </Button>
-              </div>
+             
+              
             </div>
           </CardContent>
         </Card>

@@ -13,11 +13,12 @@ export const signup = (req, res) => {
     });
   }
 
+  // Check if email exists
   db.query(
     "SELECT id FROM users WHERE email = ?",
     [email],
     async (err, result) => {
-      if (err) return res.status(500).json({ success: false });
+      if (err) return res.status(500).json({ success: false, error: err });
 
       if (result.length > 0) {
         return res.status(409).json({
@@ -26,19 +27,33 @@ export const signup = (req, res) => {
         });
       }
 
+      // Hash password
       const hashedPassword = await bcrypt.hash(password, 10);
 
+      // Insert new user
       db.query(
         "INSERT INTO users (email, password, role) VALUES (?, ?, ?)",
         [email, hashedPassword, role],
         (err, insertRes) => {
-          if (err) return res.status(500).json({ success: false });
+          if (err) return res.status(500).json({ success: false, error: err });
 
+          // Create JWT Token
           const token = jwt.sign(
             { id: insertRes.insertId, role },
-            process.env.JWT_SECRET,
+            process.env.JWT_SECRET || "fallback_secret",
             { expiresIn: "1d" },
           );
+
+          console.log(
+            `✅ NEW USER SIGNED UP: ${email} (ID: ${insertRes.insertId})`,
+          );
+
+          // ✅ SEND COOKIE (Critical for authMiddleware)
+          res.cookie("token", token, {
+            httpOnly: true,
+            secure: false, // Set true in production (https)
+            sameSite: "lax",
+          });
 
           return res.json({
             success: true,
@@ -59,11 +74,16 @@ export const signup = (req, res) => {
 export const login = (req, res) => {
   const { email, password } = req.body;
 
+  console.log(`🔍 LOGIN ATTEMPT: ${email}`);
+
   db.query(
     "SELECT * FROM users WHERE email = ?",
     [email],
     async (err, result) => {
-      if (err || result.length === 0) {
+      if (err) return res.status(500).json({ success: false, error: err });
+
+      if (result.length === 0) {
+        console.log("❌ USER NOT FOUND");
         return res.json({
           success: false,
           message: "Invalid email or password",
@@ -74,17 +94,28 @@ export const login = (req, res) => {
       const isMatch = await bcrypt.compare(password, user.password);
 
       if (!isMatch) {
+        console.log("❌ PASSWORD MISMATCH");
         return res.json({
           success: false,
           message: "Invalid email or password",
         });
       }
 
+      // Create JWT Token
       const token = jwt.sign(
-        { id: user.id, role: user.role, email: user.email },
-        process.env.JWT_SECRET,
+        { id: user.id, role: user.role },
+        process.env.JWT_SECRET || "fallback_secret",
         { expiresIn: "1d" },
       );
+
+      console.log(`✅ LOGIN SUCCESS: ${user.email} (ID: ${user.id})`);
+
+      // ✅ SEND COOKIE (Critical for authMiddleware)
+      res.cookie("token", token, {
+        httpOnly: true,
+        secure: false, // Set true in production
+        sameSite: "lax",
+      });
 
       return res.json({
         success: true,
@@ -101,5 +132,6 @@ export const login = (req, res) => {
 
 /* ===================== LOGOUT ===================== */
 export const logout = (req, res) => {
+  res.clearCookie("token");
   res.json({ success: true });
 };

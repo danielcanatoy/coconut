@@ -20,21 +20,23 @@ export const LoginPage = (): JSX.Element => {
       const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include", // 👈 REQUIRED for auth cookies to work!
         body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
 
-      // ✅ ADD THIS PART
       if (!data.success) {
         alert(data.message || "Invalid email or password");
         return;
       }
 
-      // ✅ SUCCESS PATH
-      localStorage.setItem("token", data.token);
+      // ✅ SAVE ROLE
       localStorage.setItem("role", data.user.role);
+      // Optional: Save token if not using httpOnly cookies (keep if backend sends it)
+      if (data.token) localStorage.setItem("token", data.token);
 
+      // ✅ REDIRECT TO DASHBOARD
       navigate(data.user.role === "worker" ? "/worker" : "/to-hire");
     } catch (error) {
       console.error(error);

@@ -130,21 +130,11 @@ export const getWorkerProfile = async (req, res) => {
     const userId = req.user.id;
 
     const sql = `
-      SELECT
-        w.first_name AS firstName,
-        w.middle_initial AS middleInitial,
-        w.last_name AS lastName,
-        w.date_of_birth AS dateOfBirth,
-        w.gender,
-        u.email,
-        w.mobile_number AS mobileNumber,
-        w.skills,
-        w.experience,
-        w.certifications,
-        w.availability,
-        w.preferred_wages AS preferredWages,
-        w.work_location AS workLocation,
-        w.languages
+      SELECT 
+        w.first_name AS firstName, w.middle_initial AS middleInitial, w.last_name AS lastName,
+        w.date_of_birth AS dateOfBirth, w.gender, u.email, w.mobile_number AS mobileNumber,
+        w.skills, w.experience, w.certifications, w.availability,
+        w.preferred_wages AS preferredWages, w.work_location AS workLocation, w.languages
       FROM workers w
       JOIN users u ON u.id = w.user_id
       WHERE w.user_id = ?
@@ -158,7 +148,6 @@ export const getWorkerProfile = async (req, res) => {
     }
 
     const worker = rows[0];
-
     res.json({
       exists: true,
       data: {
@@ -168,7 +157,7 @@ export const getWorkerProfile = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error("GET WORKER PROFILE ERROR:", err);
+    console.error("GET PROFILE ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -196,11 +185,11 @@ export const updateWorkerProfile = async (req, res) => {
       languages,
     } = req.body;
 
-    if (!Array.isArray(skills) || !Array.isArray(languages)) {
-      return res.status(400).json({
-        message: "Skills and languages must be arrays",
-      });
-    }
+    const safeSkills = Array.isArray(skills) ? JSON.stringify(skills) : "[]";
+    const safeLanguages = Array.isArray(languages)
+      ? JSON.stringify(languages)
+      : "[]";
+    const normalizedDate = dateOfBirth ? dateOfBirth.split("T")[0] : null;
 
     const normalizedDateOfBirth = dateOfBirth
       ? dateOfBirth.split("T")[0]
@@ -248,5 +237,32 @@ export const updateWorkerProfile = async (req, res) => {
   } catch (err) {
     console.error("UPDATE WORKER ERROR:", err);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+/* =========================
+   GET ALL LISTINGS
+========================= */
+export const getAllListings = async (req, res) => {
+  try {
+    const sql = `
+      SELECT l.*, e.company_name
+      FROM listings l
+      LEFT JOIN employers e ON l.employer_id = e.user_id
+      ORDER BY l.created_at DESC
+    `;
+
+    const [rows] = await db.promise().query(sql);
+
+    res.json({
+      success: true,
+      data: rows,
+    });
+  } catch (err) {
+    console.error("GET ALL LISTINGS ERROR:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch listings",
+    });
   }
 };

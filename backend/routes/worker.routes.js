@@ -1,17 +1,18 @@
 import express from "express";
+import { db } from "../config/db.js";
 import {
   registerWorker,
   getWorkerProfile,
   updateWorkerProfile,
+  getAllListings,
 } from "../controllers/worker.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
-import { db } from "../config/db.js";
 
 const router = express.Router();
 
 // 🆕 Signup
 router.post("/profile", registerWorker);
-
+router.get("/listings", getAllListings);
 // 🔐 Protected
 router.get("/profile", authMiddleware, getWorkerProfile);
 router.put("/profile", authMiddleware, updateWorkerProfile);

@@ -56,7 +56,7 @@ export const WorkerProjects = (): JSX.Element => {
           className={`px-6 py-2 rounded-full font-semibold text-sm ${
             selectedTab === "active"
               ? "bg-[#FF9D00] text-black"
-              : "bg-[#FF9D00]/20 text-black/70"
+              : "bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]"
           }`}
         >
           Active Projects
@@ -66,7 +66,7 @@ export const WorkerProjects = (): JSX.Element => {
           className={`px-6 py-2 rounded-full font-semibold text-sm ${
             selectedTab === "completed"
               ? "bg-[#98FF7E] text-black"
-              : "bg-[#98FF7E]/20 text-black/70"
+              : "bg-[#98FF7E] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]"
           }`}
         >
           Completed Designs
@@ -74,7 +74,7 @@ export const WorkerProjects = (): JSX.Element => {
       </div>
 
       {/* Projects Grid */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-3 gap-6">
         {currentProjects.map((project) => (
           <Card
             key={project.id}

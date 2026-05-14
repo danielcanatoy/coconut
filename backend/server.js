@@ -1,6 +1,7 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
+import cookieParser from "cookie-parser"; // 👈 1. IMPORT THIS
 
 dotenv.config();
 
@@ -10,7 +11,14 @@ import companyRoutes from "./routes/company.routes.js";
 import "./config/db.js";
 
 const app = express();
-app.use(cors());
+
+// ✅ FIXED CORS - allows React + cookies
+app.use(cors({
+  origin: ["http://localhost:3000", "http://localhost:5173"], 
+  credentials: true
+}));
+
+app.use(cookieParser()); // 👈 2. USE THIS (Before routes!)
 app.use(express.json());
 
 app.use("/api/auth", authRoutes);
