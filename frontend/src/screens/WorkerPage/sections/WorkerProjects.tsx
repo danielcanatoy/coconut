@@ -26,7 +26,7 @@ export const WorkerProjects = (): JSX.Element => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/worker/projects", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/worker/projects`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

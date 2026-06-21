@@ -18,7 +18,7 @@ export const WorkerListings = (): JSX.Element => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:5000/api/worker/listings", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/worker/listings`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -42,7 +42,7 @@ export const WorkerListings = (): JSX.Element => {
     role: string,
   ) => {
     try {
-      const response = await fetch("http://localhost:5000/api/worker/apply", {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/worker/apply`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

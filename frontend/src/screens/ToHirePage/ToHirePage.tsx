@@ -27,7 +27,7 @@ export const ToHirePage = (): JSX.Element => {
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
-    fetch("http://localhost:5000/api/company/profile", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/company/profile`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())

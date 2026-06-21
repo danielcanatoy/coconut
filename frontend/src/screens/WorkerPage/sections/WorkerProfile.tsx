@@ -76,7 +76,7 @@ export const WorkerProfile = ({
       return;
     }
 
-    fetch("http://localhost:5000/api/worker/profile", {
+    fetch(`${import.meta.env.VITE_API_URL}/api/worker/profile`, {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => res.json())
@@ -140,7 +140,7 @@ export const WorkerProfile = ({
       setSaving(true);
       setError(null);
 
-      const res = await fetch("http://localhost:5000/api/worker/profile", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/worker/profile`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
