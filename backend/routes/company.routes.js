@@ -3,6 +3,8 @@ import { authMiddleware } from "../middleware/auth.middleware.js";
 import {
   createListing,
   getListings,
+  deleteListing,
+  updateListing,
   getCompanyProfile,
   updateCompanyProfile,
   getApplicants,
@@ -18,6 +20,8 @@ router.put("/profile", authMiddleware, updateCompanyProfile);
 // --- LISTINGS ROUTES ---
 router.post("/listings", authMiddleware, createListing);
 router.get("/listings", authMiddleware, getListings);
+router.delete("/listings/:id", authMiddleware, deleteListing);
+router.put("/listings/:id", authMiddleware, updateListing);
 
 // --- APPLICANTS ROUTES ---
 // Kumukuha ng lahat ng aplikante na nag-apply sa mga listings ng employer

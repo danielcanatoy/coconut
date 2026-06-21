@@ -42,8 +42,8 @@ export const createListing = (req, res) => {
 export const getListings = (req, res) => {
   const employerId = req.user.id;
   db.query(
-    `SELECT id, position, in_need_of AS inNeedOf, time_in AS timeIn, 
-            time_out AS timeOut, salary, work_days AS workDays, progress, location
+    `SELECT id, employer_id, position, in_need_of, time_in, 
+            time_out, salary, work_days, progress, location
      FROM listings WHERE employer_id = ? ORDER BY created_at DESC`,
     [employerId],
     (err, rows) => {
@@ -53,6 +53,52 @@ export const getListings = (req, res) => {
   );
 };
 
+export const deleteListing = (req, res) => {
+  const employerId = req.user.id;
+  const listingId = req.params.id;
+
+  db.query(
+    "DELETE FROM listings WHERE id = ? AND employer_id = ?",
+    [listingId, employerId],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: "Delete failed" });
+      if (result.affectedRows === 0)
+        return res.status(404).json({ message: "Listing not found" });
+      res.json({ success: true });
+    },
+  );
+};
+
+export const updateListing = (req, res) => {
+  const employerId = req.user.id;
+  const listingId = req.params.id;
+  const { position, inNeedOf, timeIn, timeOut, salary, workDays, location } =
+    req.body;
+
+  db.query(
+    `UPDATE listings SET
+      position = ?, in_need_of = ?, time_in = ?, time_out = ?,
+      salary = ?, work_days = ?, location = ?
+     WHERE id = ? AND employer_id = ?`,
+    [
+      position,
+      inNeedOf,
+      timeIn,
+      timeOut,
+      salary,
+      workDays,
+      location,
+      listingId,
+      employerId,
+    ],
+    (err, result) => {
+      if (err) return res.status(500).json({ message: "Update failed" });
+      if (result.affectedRows === 0)
+        return res.status(404).json({ message: "Listing not found" });
+      res.json({ success: true });
+    },
+  );
+};
 /* ===================== 3. GET PROFILE ===================== */
 export const getCompanyProfile = (req, res) => {
   const userId = req.user.id;
@@ -144,9 +190,37 @@ export const getApplicants = (req, res) => {
 /* ===================== 6. UPDATE APP STATUS (New) ===================== */
 export const updateApplicationStatus = (req, res) => {
   const { status } = req.body;
-  const sql = "UPDATE applications SET status = ? WHERE id = ?";
-  db.query(sql, [status, req.params.id], (err) => {
-    if (err) return res.status(500).json({ error: "Update failed" });
-    res.json({ success: true });
-  });
+  const applicationId = req.params.id;
+
+  console.log("Updating application:", applicationId, "to status:", status); // ← add
+
+  db.query(
+    "UPDATE applications SET status = ? WHERE id = ?",
+    [status, applicationId],
+    (err) => {
+      if (err) {
+        console.error("Update error:", err); // ← add
+        return res.status(500).json({ message: "Update failed" });
+      }
+
+      if (status === "approved") {
+        console.log("Inserting into projects for application:", applicationId); // ← add
+        db.query(
+          `INSERT INTO projects (listing_id, worker_id)
+           SELECT listing_id, worker_id FROM applications WHERE id = ?`,
+          [applicationId],
+          (err2) => {
+            if (err2) {
+              console.error("Project insert error:", err2.message); // ← add
+              return res.status(500).json({ message: err2.message });
+            }
+            console.log("Project created successfully!"); // ← add
+            return res.json({ success: true });
+          },
+        );
+      } else {
+        res.json({ success: true });
+      }
+    },
+  );
 };

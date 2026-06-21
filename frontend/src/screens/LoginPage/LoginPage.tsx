@@ -20,7 +20,7 @@ export const LoginPage = (): JSX.Element => {
       const res = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // 👈 REQUIRED for auth cookies to work!
+        credentials: "include",
         body: JSON.stringify({ email, password }),
       });
 
@@ -31,12 +31,9 @@ export const LoginPage = (): JSX.Element => {
         return;
       }
 
-      // ✅ SAVE ROLE
       localStorage.setItem("role", data.user.role);
-      // Optional: Save token if not using httpOnly cookies (keep if backend sends it)
       if (data.token) localStorage.setItem("token", data.token);
 
-      // ✅ REDIRECT TO DASHBOARD
       navigate(data.user.role === "worker" ? "/worker" : "/to-hire");
     } catch (error) {
       console.error(error);
@@ -51,23 +48,33 @@ export const LoginPage = (): JSX.Element => {
         style={{ backgroundImage: "url(/rectangle-3.png)" }}
       />
 
-      <nav className="fixed top-[20px] left-0 w-full z-50">
+      {/* Navbar — homepage style */}
+      <nav className="fixed top-5 left-0 w-full z-50">
         <div className="relative w-full px-10 flex items-center justify-end">
-          {/* Centered Navbar */}
+
+          {/* Center Navbar */}
           <div className="absolute left-1/2 -translate-x-1/2">
-            <div className="flex items-center gap-6 bg-[#00000066] rounded-[40px] shadow-[0px_4px_4px_#00000040] px-8 h-[50px]">
+            <div className="flex items-center gap-4 bg-[#00000066] rounded-full shadow-[0px_4px_4px_#00000040] px-6 h-[55px] backdrop-blur-sm">
               {navItems.map((item, index) => (
                 <button
                   key={index}
                   onClick={() => navigate(item.path)}
-                  className={`relative px-3 py-1 rounded-full
-              [font-family:'Jost',Helvetica] font-normal text-xl
-              transition-all duration-200 ease-out
-              ${
-                item.active
-                  ? "text-[#ff9d00] bg-white/10"
-                  : "text-white hover:bg-white/10"
-              }`}
+                  className={`
+                    flex items-center justify-center
+                    min-w-[95px]
+                    h-[40px]
+                    rounded-full
+                    font-['Jost']
+                    text-base
+                    font-medium
+                    tracking-wide
+                    transition-all duration-200 ease-out
+                    ${
+                      item.active
+                        ? "text-[#ff9d00] bg-white/10"
+                        : "text-white hover:bg-white/10"
+                    }
+                  `}
                 >
                   {item.label}
                 </button>
@@ -75,13 +82,14 @@ export const LoginPage = (): JSX.Element => {
             </div>
           </div>
 
-          {/* Contact Us Button (Right Side) */}
+          {/* Contact Button */}
           <Button
             onClick={() => navigate("/contact")}
-            className="bg-[#FF9D00] rounded-[40px] shadow-[0px_4px_4px_#00000040] h-[50px] px-8 text-white text-xl hover:bg-[#00000080]"
+            className="bg-[#FF9D00] rounded-full shadow-[0px_4px_4px_#00000040] h-[55px] px-8 text-base font-medium text-white hover:bg-[#d98400] transition-all duration-200"
           >
             Contact Us
           </Button>
+
         </div>
       </nav>
 
@@ -131,7 +139,7 @@ export const LoginPage = (): JSX.Element => {
               />
 
               <div className="flex justify-center">
-                <button className="[font-family:'Jost',Helvetica] font-normal italic text-black text-sm tracking-[0] leading-[normal] underline hover:no-underline transition-all duration-200 ease-out hover: active:scale-[0.98]">
+                <button className="[font-family:'Jost',Helvetica] font-normal italic text-black text-sm tracking-[0] leading-[normal] underline hover:no-underline transition-all duration-200 ease-out active:scale-[0.98]">
                   Forgot your Password?
                 </button>
               </div>
@@ -140,8 +148,8 @@ export const LoginPage = (): JSX.Element => {
                 <Button
                   onClick={handleLogin}
                   className="bg-white hover:bg-gray-100 text-black rounded-[48px] h-[44px] w-[180px] [font-family:'Jost',Helvetica] font-semibold text-lg transition-all duration-200 ease-out
-                hover:bg-[#FFC05B] hover:shadow-md hover:-translate-y-[1px]
-                active:scale-[0.98]"
+                  hover:bg-[#FFC05B] hover:shadow-md hover:-translate-y-[1px]
+                  active:scale-[0.98]"
                 >
                   Login
                 </Button>

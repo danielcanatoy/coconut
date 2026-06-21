@@ -1,11 +1,10 @@
 import { Button } from "../../components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CompanyHome } from "./sections/CompanyHome";
 import { CompanyProjects } from "./sections/CompanyProjects";
 import { CompanyListings } from "./sections/CompanyListings";
 import { CompanyWorkers } from "./sections/CompanyWorkers";
 import { CompanyApplicants } from "./sections/CompanyApplicants";
-import { CompanyMessages } from "./sections/CompanyMessages";
 import { CompanyProfile } from "./sections/CompanyProfile";
 import { useNavigate } from "react-router-dom";
 
@@ -20,8 +19,23 @@ type ActiveSection =
 export const ToHirePage = (): JSX.Element => {
   const [activeSection, setActiveSection] = useState<ActiveSection>("home");
   const [showProfileEdit, setShowProfileEdit] = useState(false);
+  const [profileImage, setProfileImage] = useState<string | null>(null); // ✅ new
 
   const navigate = useNavigate();
+
+  // ✅ Fetch profile image on load
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    fetch("http://localhost:5000/api/company/profile", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.profileImage) setProfileImage(data.profileImage);
+      })
+      .catch(console.error);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -40,7 +54,19 @@ export const ToHirePage = (): JSX.Element => {
         <aside className="w-[200px] bg-[#f5e6d3] shadow-[2px_0px_8px_#00000020] flex flex-col overflow-y-auto">
           <div className="p-6 space-y-4">
             <div className="text-center">
-              <div className="w-24 h-24 bg-black rounded-full mx-auto mb-4" />
+              {/* ✅ Profile image with fallback */}
+              <div className="w-24 h-24 rounded-full mx-auto mb-4 overflow-hidden bg-black">
+                {profileImage ? (
+                  <img
+                    src={profileImage}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-black rounded-full" />
+                )}
+              </div>
+
               <button
                 onClick={() => setShowProfileEdit(true)}
                 className="[font-family:'Jost',Helvetica] font-semibold text-black text-base underline hover:no-underline"
@@ -104,17 +130,6 @@ export const ToHirePage = (): JSX.Element => {
               >
                 Applicants
               </button>
-
-              {/* <button
-                onClick={() => setActiveSection("messages")}
-                className={`w-full py-3 px-4 rounded-lg [font-family:'Jost',Helvetica] font-semibold text-lg transition-colors ${
-                  activeSection === "messages"
-                    ? "bg-[#ff9d00] text-black"
-                    : "bg-white text-black hover:bg-[#ffce80]"
-                }`}
-              >
-                Messages
-              </button> */}
             </div>
           </div>
 
@@ -130,7 +145,11 @@ export const ToHirePage = (): JSX.Element => {
 
         <main className="flex-1 overflow-y-auto p-8">
           {showProfileEdit ? (
-            <CompanyProfile onClose={() => setShowProfileEdit(false)} />
+            // ✅ Pass onProfileImageChange to update sidebar immediately
+            <CompanyProfile
+              onClose={() => setShowProfileEdit(false)}
+              onProfileImageChange={setProfileImage}
+            />
           ) : (
             <>
               {activeSection === "home" && <CompanyHome />}
@@ -138,7 +157,6 @@ export const ToHirePage = (): JSX.Element => {
               {activeSection === "listings" && <CompanyListings />}
               {activeSection === "workers" && <CompanyWorkers />}
               {activeSection === "applicants" && <CompanyApplicants />}
-              {activeSection === "messages" && <CompanyMessages />}
             </>
           )}
         </main>

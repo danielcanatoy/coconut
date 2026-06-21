@@ -1,44 +1,45 @@
 import { Button } from "../../../../components/ui/button";
 import { Input } from "../../../../components/ui/input";
+import { useNavigate } from "react-router-dom";
 
 export const NewsletterSubscriptionSection = (): JSX.Element => {
+  const navigate = useNavigate();
+
   return (
-    <section className="relative w-full h-[797px]">
-      {/* Full section background image */}
-      <img
-        className="absolute inset-0 w-full h-full object-cover"
-        alt="Rectangle"
-        src="/rectangle.png"
+    <section className="relative w-full py-[5%] overflow-hidden">
+
+      {/* Background Image */}
+      <div
+      className="absolute inset-0 bg-cover bg-center bg-fixed"
+      style={{ backgroundImage: "url('https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1600&q=80  ')" }}
       />
 
-      {/* Decorative vector */}
-      <img
-        className="absolute top-[-164px] right-0 w-[739px] h-[565px] pointer-events-none"
-        alt="Vector"
-        src="/vector-1.svg"
-      />
+      {/* Overlay */}
+      <div className="absolute inset-0 bg-[#1a1a1a]/60" />
 
-      {/* Content overlay */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-6">
-        <h2 className="[font-family:'Jost',Helvetica] font-normal text-black text-[64px] tracking-[0] leading-normal text-center">
-          Want To Stay Updated?
-        </h2>
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-4 scale-[95%] origin-center">
 
-        <p className="[font-family:'Jost',Helvetica] font-normal text-black text-base tracking-[0] leading-normal text-center">
-          Subscribe to our newsletter for the latest updates.
-        </p>
+        <div className="flex flex-col items-center justify-center gap-6 py-24 border-2 border-white rounded-2xl px-12">
+          <h2 className="font-['Jost'] font-semibold text-white text-[42px] tracking-wide leading-tight text-center">
+            START BUILDING BETTER OPPORTUNITIES TODAY
+          </h2>
 
-        {/* Email input + submit */}
-        <div className="flex items-center w-full max-w-[626px] bg-[#d9d9d9] rounded-full overflow-hidden h-[54px]">
-          <Input
-            type="email"
-            placeholder="youremailaddress@email.com"
-            className="flex-1 h-full border-0 bg-transparent [font-family:'Jost',Helvetica] font-normal italic text-[#00000066] text-xl px-6 focus-visible:ring-0 focus-visible:ring-offset-0"
-          />
-          <Button className="h-full w-[147px] bg-[#ff9d00] hover:bg-[#ff9d00]/90 rounded-l-none rounded-r-full [font-family:'Jost',Helvetica] font-semibold text-white text-xl">
-            Submit
+          <p className="font-['Jost'] font-normal text-white text-[18px] text-center">
+            Construction Co. connects skilled construction workers with trusted companies looking for reliable talent.
+            Whether you're searching for job opportunities or building a stronger workforce, our platform makes hiring simpler,
+            faster, and more efficient.
+          </p>
+
+          <Button
+            onClick={() => navigate("/signup")}
+            className="w-[180px] h-[47px] bg-[#ff9d00]  hover:bg-white/90 rounded-[60px] [font-family:'Jost',Helvetica] font-extrabold text-white text-base"
+          >
+            Sign Up Now
           </Button>
+
         </div>
+
       </div>
     </section>
   );

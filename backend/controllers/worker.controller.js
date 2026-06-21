@@ -25,61 +25,41 @@ export const registerWorker = async (req, res) => {
       password,
     } = req.body;
 
-    if (!email || !password) {
+    if (!email || !password)
       return res
         .status(400)
         .json({ message: "Email and password are required" });
-    }
 
-    if (!Array.isArray(skills) || !Array.isArray(languages)) {
-      return res.status(400).json({
-        message: "Skills and languages must be arrays",
-      });
-    }
+    if (!Array.isArray(skills) || !Array.isArray(languages))
+      return res
+        .status(400)
+        .json({ message: "Skills and languages must be arrays" });
 
-    // 🔍 Check if user already exists
     const [existingUsers] = await db
       .promise()
       .query("SELECT id FROM users WHERE email = ?", [email]);
-
-    if (existingUsers.length) {
+    if (existingUsers.length)
       return res.status(409).json({ message: "Email already registered" });
-    }
 
-    // 🔐 Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 👤 Create user
-    const [userResult] = await db.promise().query(
-      `INSERT INTO users (email, password, role)
-       VALUES (?, ?, 'worker')`,
-      [email, hashedPassword],
-    );
+    const [userResult] = await db
+      .promise()
+      .query(
+        `INSERT INTO users (email, password, role) VALUES (?, ?, 'worker')`,
+        [email, hashedPassword],
+      );
 
     const userId = userResult.insertId;
-
-    // 🧑‍🔧 Create worker
     const normalizedDateOfBirth = dateOfBirth
       ? dateOfBirth.split("T")[0]
       : null;
 
     await db.promise().query(
       `INSERT INTO workers (
-        user_id,
-        first_name,
-        middle_initial,
-        last_name,
-        email,
-        date_of_birth,
-        gender,
-        mobile_number,
-        skills,
-        experience,
-        certifications,
-        availability,
-        preferred_wages,
-        work_location,
-        languages
+        user_id, first_name, middle_initial, last_name, email,
+        date_of_birth, gender, mobile_number, skills, experience,
+        certifications, availability, preferred_wages, work_location, languages
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         userId,
@@ -100,7 +80,6 @@ export const registerWorker = async (req, res) => {
       ],
     );
 
-    // 🔑 Generate JWT
     const token = jwt.sign(
       { id: userId, role: "worker" },
       process.env.JWT_SECRET,
@@ -110,11 +89,7 @@ export const registerWorker = async (req, res) => {
     res.status(201).json({
       success: true,
       token,
-      user: {
-        id: userId,
-        email,
-        role: "worker",
-      },
+      user: { id: userId, email, role: "worker" },
     });
   } catch (err) {
     console.error("REGISTER WORKER ERROR:", err);
@@ -129,23 +104,21 @@ export const getWorkerProfile = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const sql = `
-      SELECT 
-        w.first_name AS firstName, w.middle_initial AS middleInitial, w.last_name AS lastName,
-        w.date_of_birth AS dateOfBirth, w.gender, u.email, w.mobile_number AS mobileNumber,
+    const [rows] = await db.promise().query(
+      `SELECT 
+        w.first_name AS firstName, w.middle_initial AS middleInitial,
+        w.last_name AS lastName, w.date_of_birth AS dateOfBirth,
+        w.gender, u.email, w.mobile_number AS mobileNumber,
         w.skills, w.experience, w.certifications, w.availability,
-        w.preferred_wages AS preferredWages, w.work_location AS workLocation, w.languages
-      FROM workers w
-      JOIN users u ON u.id = w.user_id
-      WHERE w.user_id = ?
-      LIMIT 1
-    `;
+        w.preferred_wages AS preferredWages, w.work_location AS workLocation,
+        w.languages, w.profile_image AS profileImage
+       FROM workers w
+       JOIN users u ON u.id = w.user_id
+       WHERE w.user_id = ? LIMIT 1`,
+      [userId],
+    );
 
-    const [rows] = await db.promise().query(sql, [userId]);
-
-    if (!rows.length) {
-      return res.status(404).json({ exists: false });
-    }
+    if (!rows.length) return res.status(404).json({ exists: false });
 
     const worker = rows[0];
     res.json({
@@ -183,34 +156,21 @@ export const updateWorkerProfile = async (req, res) => {
       preferredWages,
       workLocation,
       languages,
+      profileImage, // ✅ new
     } = req.body;
-
-    const safeSkills = Array.isArray(skills) ? JSON.stringify(skills) : "[]";
-    const safeLanguages = Array.isArray(languages)
-      ? JSON.stringify(languages)
-      : "[]";
-    const normalizedDate = dateOfBirth ? dateOfBirth.split("T")[0] : null;
 
     const normalizedDateOfBirth = dateOfBirth
       ? dateOfBirth.split("T")[0]
       : null;
 
     await db.promise().query(
-      `UPDATE workers
-       SET
-         first_name = ?,
-         middle_initial = ?,
-         last_name = ?,
-         date_of_birth = ?,
-         gender = ?,
-         mobile_number = ?,
-         skills = ?,
-         experience = ?,
-         certifications = ?,
-         availability = ?,
-         preferred_wages = ?,
-         work_location = ?,
-         languages = ?
+      `UPDATE workers SET
+         first_name = ?, middle_initial = ?, last_name = ?,
+         date_of_birth = ?, gender = ?, mobile_number = ?,
+         skills = ?, experience = ?, certifications = ?,
+         availability = ?, preferred_wages = ?,
+         work_location = ?, languages = ?,
+         profile_image = ?
        WHERE user_id = ?`,
       [
         firstName,
@@ -219,21 +179,19 @@ export const updateWorkerProfile = async (req, res) => {
         normalizedDateOfBirth,
         gender,
         mobileNumber,
-        JSON.stringify(skills),
+        JSON.stringify(Array.isArray(skills) ? skills : []),
         experience,
         certifications,
         availability,
         preferredWages,
         workLocation,
-        JSON.stringify(languages),
+        JSON.stringify(Array.isArray(languages) ? languages : []),
+        profileImage || null, // ✅ new
         userId,
       ],
     );
 
-    res.json({
-      success: true,
-      message: "Worker profile updated successfully",
-    });
+    res.json({ success: true, message: "Worker profile updated successfully" });
   } catch (err) {
     console.error("UPDATE WORKER ERROR:", err);
     res.status(500).json({ message: "Server error" });
@@ -245,24 +203,49 @@ export const updateWorkerProfile = async (req, res) => {
 ========================= */
 export const getAllListings = async (req, res) => {
   try {
-    const sql = `
-      SELECT l.*, e.company_name
-      FROM listings l
-      LEFT JOIN employers e ON l.employer_id = e.user_id
-      ORDER BY l.created_at DESC
-    `;
-
-    const [rows] = await db.promise().query(sql);
-
-    res.json({
-      success: true,
-      data: rows,
-    });
+    const [rows] = await db.promise().query(
+      `SELECT DISTINCT l.*, e.company_name
+       FROM listings l
+       LEFT JOIN employers e ON l.employer_id = e.user_id
+       ORDER BY l.created_at DESC`,
+    );
+    res.json({ success: true, data: rows });
   } catch (err) {
     console.error("GET ALL LISTINGS ERROR:", err);
-    res.status(500).json({
-      success: false,
-      message: "Failed to fetch listings",
-    });
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch listings" });
+  }
+};
+
+/* =========================
+   GET WORKER PROJECTS
+========================= */
+export const getWorkerProjects = async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const [rows] = await db.promise().query(
+      `SELECT DISTINCT
+        p.id, p.status, p.start_date, p.end_date,
+        p.created_at,
+        l.position, l.in_need_of, l.time_in, l.time_out,
+        l.salary, l.work_days, l.location,
+        e.company_name
+       FROM projects p
+       JOIN listings l ON p.listing_id = l.id
+       JOIN employers e ON l.employer_id = e.user_id
+       JOIN workers w ON p.worker_id = w.id
+       WHERE w.user_id = ?
+       ORDER BY p.created_at DESC`,
+      [userId],
+    );
+
+    res.json({ success: true, data: rows });
+  } catch (err) {
+    console.error("GET WORKER PROJECTS ERROR:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch projects" });
   }
 };

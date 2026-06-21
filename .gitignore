@@ -1,6 +1,2 @@
-backend/node_modules
-project/node_modules
-/node_modules
-
-project/.env
-backend/.env
+node_modules/
+     .env

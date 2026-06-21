@@ -1,51 +1,49 @@
 import { Card, CardContent } from "../../../components/ui/card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-// Sample data
-const activeProjects = [
-  {
-    id: 1,
-    company: "LightLab",
-    role: "Steel Worker",
-    timeIn: "9:00 am",
-    timeOut: "5:30 pm",
-    duration: "3 weeks",
-    salary: "₱850.00/day"
-  },
-  {
-    id: 2,
-    company: "Mango",
-    role: "Electrician",
-    timeIn: "10:00 am",
-    timeOut: "6:00 pm",
-    duration: "2 weeks",
-    salary: "₱930.00/day"
-  },
-];
-
-const completedProjects = [
-  {
-    id: 1,
-    company: "Sunrise Construction",
-    role: "Mason",
-    completedDate: "Jan 15, 2026",
-    duration: "4 weeks",
-    salary: "₱850.00/day"
-  },
-  {
-    id: 2,
-    company: "BlueSky Builders",
-    role: "Plumber",
-    completedDate: "Jan 10, 2026",
-    duration: "2 weeks",
-    salary: "₱850.00/day"
-  },
-];
+interface Project {
+  id: number;
+  status: "ongoing" | "completed";
+  start_date: string;
+  end_date: string;
+  position: string;
+  in_need_of: string;
+  time_in: string;
+  time_out: string;
+  salary: string;
+  work_days: number;
+  location: string;
+  company_name: string;
+}
 
 export const WorkerProjects = (): JSX.Element => {
-  const [selectedTab, setSelectedTab] = useState<"active" | "completed">("active");
+  const [selectedTab, setSelectedTab] = useState<"active" | "completed">(
+    "active",
+  );
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const currentProjects = selectedTab === "active" ? activeProjects : completedProjects;
+  const token = localStorage.getItem("token");
+
+  useEffect(() => {
+    fetch("http://localhost:5000/api/worker/projects", {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setProjects(Array.isArray(data.data) ? data.data : []);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching projects:", err);
+        setLoading(false);
+      });
+  }, []);
+
+  const activeProjects = projects.filter((p) => p.status === "ongoing");
+  const completedProjects = projects.filter((p) => p.status === "completed");
+  const currentProjects =
+    selectedTab === "active" ? activeProjects : completedProjects;
 
   return (
     <div className="space-y-8 px-6">
@@ -53,77 +51,121 @@ export const WorkerProjects = (): JSX.Element => {
       <div className="flex space-x-4 mb-8">
         <button
           onClick={() => setSelectedTab("active")}
-          className={`px-6 py-2 rounded-full font-semibold text-sm ${
+          className={`px-6 py-2 rounded-full font-semibold text-sm shadow-[0px_4px_8px_rgba(0,0,0,0.25)] ${
             selectedTab === "active"
-              ? "bg-[#FF9D00] text-black"
-              : "bg-[#FF9D00] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]"
+              ? "bg-[#FF9D00] text-black ring-2 ring-black"
+              : "bg-[#FF9D00] text-black"
           }`}
         >
           Active Projects
         </button>
         <button
           onClick={() => setSelectedTab("completed")}
-          className={`px-6 py-2 rounded-full font-semibold text-sm ${
+          className={`px-6 py-2 rounded-full font-semibold text-sm shadow-[0px_4px_8px_rgba(0,0,0,0.25)] ${
             selectedTab === "completed"
-              ? "bg-[#98FF7E] text-black"
-              : "bg-[#98FF7E] px-6 py-2 rounded-full inline-block shadow-[0px_4px_8px_rgba(0,0,0,0.25)]"
+              ? "bg-[#98FF7E] text-black ring-2 ring-black"
+              : "bg-[#98FF7E] text-black"
           }`}
         >
-          Completed Designs
+          Completed Projects
         </button>
       </div>
 
-      {/* Projects Grid */}
-      <div className="grid grid-cols-3 gap-6">
-        {currentProjects.map((project) => (
-          <Card
-            key={project.id}
-            className={`border-none rounded-[20px] shadow-[0px_4px_12px_#00000020] ${
-              selectedTab === "active" ? "bg-[#FF9D00]" : "bg-[#98FF7E]"
-            }`}
-          >
-            <CardContent className="p-6">
-              <div className="mb-4 text-center">
-                <p className="font-bold text-black text-2xl">{project.company}</p>
-                <p className="font-semibold text-black text-lg">{project.role}</p>
-              </div>
+      {/* Content */}
+      {loading ? (
+        <p className="text-center text-gray-500">Loading projects...</p>
+      ) : currentProjects.length === 0 ? (
+        <div className="text-center py-20 opacity-50">
+          <p className="text-xl">
+            No {selectedTab === "active" ? "active" : "completed"} projects yet.
+          </p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-3 gap-6">
+          {currentProjects.map((project) => (
+            <Card
+              key={project.id}
+              className={`border-none rounded-[20px] shadow-[0px_4px_12px_#00000020] ${
+                selectedTab === "active" ? "bg-[#FF9D00]" : "bg-[#98FF7E]"
+              }`}
+            >
+              <CardContent className="p-6">
+                <div className="mb-4 text-center">
+                  <p className="font-bold text-black text-2xl">
+                    {project.company_name || "Company"}
+                  </p>
+                  <p className="font-semibold text-black text-lg">
+                    {project.in_need_of || project.position}
+                  </p>
+                </div>
 
-              {selectedTab === "active" && (
-                <div className="grid grid-cols-2 gap-4  mb-4 bg-white/70 p-4 rounded-md">
-                  <div className="flex flex-col justify-between h-full">
-                    <div>
-                      <p className="font-semibold text-black">Time in:</p>
-                      <p className="font-normal text-black">{(project as any).timeIn}</p>
+                {selectedTab === "active" && (
+                  <div className="grid grid-cols-2 gap-4 mb-4 bg-white/70 p-4 rounded-md">
+                    <div className="flex flex-col justify-between h-full">
+                      <div>
+                        <p className="font-semibold text-black">Time in:</p>
+                        <p className="font-normal text-black">
+                          {project.time_in}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-black mt-2">Salary:</p>
+                        <p className="font-normal text-black">
+                          ₱{project.salary}/day
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold text-black mt-2">Salary:</p>
-                      <p className="font-normal text-black">{(project as any).salary}</p>
+                    <div className="flex flex-col justify-between h-full">
+                      <div>
+                        <p className="font-semibold text-black">Time out:</p>
+                        <p className="font-normal text-black">
+                          {project.time_out}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-black mt-2">
+                          Work Days:
+                        </p>
+                        <p className="font-normal text-black">
+                          {project.work_days} days
+                        </p>
+                      </div>
+                    </div>
+                    <div className="col-span-2 pt-2 border-t border-white/50">
+                      <p className="text-sm text-black">
+                        📍 {project.location}
+                      </p>
                     </div>
                   </div>
-                  <div className="flex flex-col justify-between h-full">
-                    <div>
-                      <p className="font-semibold text-black">Time out:</p>
-                      <p className="font-normal text-black">{(project as any).timeOut}</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold text-black mt-2">Duration:</p>
-                      <p className="font-normal text-black">{(project as any).duration}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
+                )}
 
-              {selectedTab === "completed" && (
-                <div className="space-y-2 text-sm mb-4 bg-white p-4 rounded-md">
-                  <p className="font-semibold text-black">Completed: {(project as any).completedDate}</p>
-                  <p className="font-normal text-black">Duration: {(project as any).duration}</p>
-                  <p className="font-normal text-black">Salary: {(project as any).salary}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        ))}
-      </div>
+                {selectedTab === "completed" && (
+                  <div className="space-y-2 text-sm mb-4 bg-white p-4 rounded-md">
+                    <p className="font-semibold text-black">
+                      Position: {project.in_need_of || project.position}
+                    </p>
+                    <p className="font-normal text-black">
+                      Completed:{" "}
+                      {project.end_date
+                        ? new Date(project.end_date).toLocaleDateString()
+                        : "N/A"}
+                    </p>
+                    <p className="font-normal text-black">
+                      Work Days: {project.work_days} days
+                    </p>
+                    <p className="font-normal text-black">
+                      Salary: ₱{project.salary}/day
+                    </p>
+                    <p className="font-normal text-black">
+                      📍 {project.location}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

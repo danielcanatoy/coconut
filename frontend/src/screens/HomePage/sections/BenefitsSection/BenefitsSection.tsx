@@ -25,7 +25,7 @@ export const BenefitsSection = (): JSX.Element => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <section className="relative w-full py-16 scale-[95%] origin-top">
+    <section className="relative w-full py-[5%] scale-[95%] origin-center">
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Left Buttons */}
@@ -34,7 +34,7 @@ export const BenefitsSection = (): JSX.Element => {
               <p className="[font-family:'Jost',Helvetica] font-medium text-black text-xl text-center lg:text-left tracking-[0] leading-[normal] mb-2">
                 Why choose us?
               </p>
-              <h2 className="[font-family:'Jost',Helvetica] font-medium text-[#ff9d00] text-[61px] text-center lg:text-left tracking-[0] leading-[normal]">
+              <h2 className="[font-family:'Jost',Helvetica] font-medium text-[#ff9d00] text-[62px] text-center lg:text-left tracking-[0] leading-[normal]">
                 BENEFITS
               </h2>
             </div>
@@ -69,7 +69,7 @@ export const BenefitsSection = (): JSX.Element => {
           <div className="flex flex-col items-center lg:items-end justify-center">
             <div className="relative w-full max-w-[725px] flex flex-col items-center lg:items-end">
               <img
-                className="w-full max-h-[420px] object-cover mt-40"
+                className="w-full h-[550px] object-cover"
                 alt={benefitItemsData[activeIndex].title}
                 src={benefitItemsData[activeIndex].image}
               />

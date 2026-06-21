@@ -5,6 +5,7 @@ import {
   getWorkerProfile,
   updateWorkerProfile,
   getAllListings,
+  getWorkerProjects,
 } from "../controllers/worker.controller.js";
 import { authMiddleware } from "../middleware/auth.middleware.js";
 
@@ -17,6 +18,7 @@ router.get("/listings", getAllListings);
 router.get("/profile", authMiddleware, getWorkerProfile);
 router.put("/profile", authMiddleware, updateWorkerProfile);
 
+router.get("/projects", authMiddleware, getWorkerProjects);
 /* =========================
    APPLY TO JOB
 ========================= */

@@ -5,6 +5,7 @@ import { useState, useEffect, useCallback } from "react";
 
 interface CompanyProfileProps {
   onClose: () => void;
+  onProfileImageChange?: (image: string | null) => void;
 }
 
 interface FormData {
@@ -15,11 +16,14 @@ interface FormData {
   companyAddress: string;
   contactNumber: string;
   companyEmail: string;
+  profileImage: string | null;
 }
 
-export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element => {
+export const CompanyProfile = ({
+  onClose,
+  onProfileImageChange,
+}: CompanyProfileProps): JSX.Element => {
   const [isEditing, setIsEditing] = useState(false);
-
   const [formData, setFormData] = useState<FormData>({
     companyName: "",
     businessType: "",
@@ -28,66 +32,25 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
     companyAddress: "",
     contactNumber: "",
     companyEmail: "",
+    profileImage: null,
   });
-
-  const [profileImage, setProfileImage] = useState<string | null>(null);
-  const [logoUrl, setLogoUrl] = useState<string | null>(null);
-
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Change if your backend runs elsewhere
+  const token = localStorage.getItem("token");
   const API_BASE = "http://localhost:5000";
-
-  // Helper: fetch() with Bearer token in Authorization header
-  const apiCall = async (endpoint: string, options: RequestInit = {}) => {
-    const token = localStorage.getItem("token");
-
-    const res = await fetch(`${API_BASE}${endpoint}`, {
-      ...options,
-      headers: {
-        ...(options.headers || {}),
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        ...(options.body ? { "Content-Type": "application/json" } : {}),
-      },
-    });
-
-    return res;
-  };
 
   const fetchProfile = useCallback(async () => {
     try {
       setLoading(true);
       setError(null);
-
-      const res = await apiCall("/api/company/profile", { method: "GET" });
-
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(text || "Failed to load profile");
-      }
-
+      const res = await fetch(`${API_BASE}/api/company/profile`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("Failed to load profile");
       const data = await res.json();
 
-      // New user -> backend returns null
-      if (!data) {
-        setFormData({
-          companyName: "",
-          businessType: "",
-          registrationNumber: "",
-          yearEstablished: "",
-          companyAddress: "",
-          contactNumber: "",
-          companyEmail: "",
-        });
-        setLogoUrl(null);
-        setProfileImage(null);
-        setIsEditing(false);
-        return;
-      }
-
-      // Existing user
       setFormData({
         companyName: data.companyName ?? "",
         businessType: data.businessType ?? "",
@@ -96,12 +59,12 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
         companyAddress: data.companyAddress ?? "",
         contactNumber: data.contactNumber ?? "",
         companyEmail: data.companyEmail ?? "",
+        profileImage: data.profileImage ?? null,
       });
 
-      // If you return logoUrl from backend, you can restore it here
-      if (data.logoUrl) {
-        setLogoUrl(data.logoUrl);
-        setProfileImage(data.logoUrl);
+      // ✅ Update sidebar image
+      if (onProfileImageChange && data.profileImage) {
+        onProfileImageChange(data.profileImage);
       }
 
       setIsEditing(false);
@@ -110,78 +73,58 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
 
   const handleChange = (field: keyof FormData, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // ✅ Convert image to base64
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !isEditing) return;
+    if (!file) return;
 
-    try {
-      setError(null);
-
-      const token = localStorage.getItem("token");
-      const fd = new FormData();
-      fd.append("logo", file);
-
-      const res = await fetch(`${API_BASE}/api/upload-logo`, {
-        method: "POST",
-        body: fd,
-        headers: {
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-      });
-
-      if (!res.ok) throw new Error("Upload failed");
-      const { url } = await res.json();
-
-      setProfileImage(URL.createObjectURL(file)); // instant preview
-      setLogoUrl(url); // stored URL (server)
-    } catch (e: any) {
-      setError(e?.message || "Failed to upload logo");
-    }
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result as string;
+      setFormData((prev) => ({ ...prev, profileImage: base64 }));
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleAction = async () => {
-    // Click Edit
     if (!isEditing) {
       setIsEditing(true);
       return;
     }
 
-    // Click Save
     try {
       setSaving(true);
       setError(null);
 
-      // ✅ Keep data on the page immediately (don’t clear state)
-      const payload = { ...formData, logoUrl };
-
-      const res = await apiCall("/api/company/profile", {
+      const res = await fetch(`${API_BASE}/api/company/profile`, {
         method: "PUT",
-        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
       });
 
-      if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(text || "Failed to save profile");
+      if (!res.ok) throw new Error("Failed to save profile");
+
+      // ✅ Update sidebar image immediately
+      if (onProfileImageChange) {
+        onProfileImageChange(formData.profileImage);
       }
 
-      // ✅ Switch to view mode (data still showing because state kept)
+      alert("Profile saved successfully!");
       setIsEditing(false);
-
-      // ✅ Optional but recommended: re-fetch from DB so UI exactly matches DB
-      await fetchProfile();
+      onClose();
     } catch (e: any) {
       setError(e?.message || "Failed to save profile");
     } finally {
@@ -209,7 +152,7 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
         </h1>
         <Button
           onClick={onClose}
-          className="bg-white hover:bg-gray-100 text-black rounded-lg h-[44px] px-6 border border-gray-200 shadow-sm [font-family:'Jost',Helvetica] font-semibold text-base"
+          className="bg-white hover:bg-gray-100 text-black rounded-lg h-[44px] px-6 border border-gray-200 shadow-sm"
         >
           Cancel
         </Button>
@@ -220,7 +163,7 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
           <div className="grid grid-cols-3 gap-12 mb-8">
             <div className="col-span-2 space-y-6">
               <div>
-                <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
+                <label className="block font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
                   Company Name
                 </label>
                 <Input
@@ -234,20 +177,21 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
 
               <div className="grid grid-cols-2 gap-8">
                 <div>
-                  <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
+                  <label className="block font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
                     Business Type
                   </label>
                   <Input
                     type="text"
                     disabled={!isEditing}
                     value={formData.businessType}
-                    onChange={(e) => handleChange("businessType", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("businessType", e.target.value)
+                    }
                     className={`w-full h-[44px] text-base transition-all ${inputClass}`}
                   />
                 </div>
-
                 <div>
-                  <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
+                  <label className="block font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
                     Registration Number
                   </label>
                   <Input
@@ -263,7 +207,7 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
               </div>
 
               <div>
-                <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
+                <label className="block font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
                   Year Established
                 </label>
                 <Input
@@ -279,7 +223,7 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
 
               <div className="grid grid-cols-2 gap-8">
                 <div>
-                  <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
+                  <label className="block font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
                     Company Address
                   </label>
                   <Input
@@ -292,9 +236,8 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
                     className={`w-full h-[44px] text-base transition-all ${inputClass}`}
                   />
                 </div>
-
                 <div>
-                  <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
+                  <label className="block font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
                     Contact Number
                   </label>
                   <Input
@@ -310,33 +253,36 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
               </div>
 
               <div>
-                <label className="block [font-family:'Jost',Helvetica] font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
+                <label className="block font-bold text-gray-500 text-sm mb-1 uppercase tracking-wide">
                   Company Email Address
                 </label>
                 <Input
                   type="email"
                   disabled={!isEditing}
                   value={formData.companyEmail}
-                  onChange={(e) =>
-                    handleChange("companyEmail", e.target.value)
-                  }
+                  onChange={(e) => handleChange("companyEmail", e.target.value)}
                   className={`w-full h-[44px] text-base transition-all ${inputClass}`}
                 />
               </div>
             </div>
 
+            {/* ✅ Profile Image Section */}
             <div className="flex flex-col items-center justify-start pt-2">
               <div className="w-48 h-48 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full shadow-xl flex items-center justify-center overflow-hidden border-4 border-gray-50 ring-2 ring-gray-200">
-                {profileImage ? (
+                {formData.profileImage ? (
                   <img
-                    src={profileImage}
+                    src={formData.profileImage}
                     alt="Company Logo"
                     className="w-full h-full object-cover rounded-full"
                   />
                 ) : (
                   <div className="text-center">
                     <div className="w-20 h-20 bg-[#ff9d00] rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg">
-                      <span className="text-white text-xl font-bold">L</span>
+                      <span className="text-white text-3xl font-bold">
+                        {formData.companyName
+                          ? formData.companyName[0].toUpperCase()
+                          : "C"}
+                      </span>
                     </div>
                     <span className="text-gray-500 text-xs font-medium block">
                       Company Logo
@@ -353,7 +299,7 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
                     onChange={handleImageChange}
                     className="hidden"
                   />
-                  <div className="bg-white hover:bg-gray-50 text-black border border-gray-300 rounded-lg h-[44px] px-8 [font-family:'Jost',Helvetica] font-semibold text-sm shadow-sm flex items-center justify-center">
+                  <div className="bg-white hover:bg-gray-50 text-black border border-gray-300 rounded-lg h-[44px] px-8 font-semibold text-sm shadow-sm flex items-center justify-center">
                     Change Profile Picture
                   </div>
                 </label>
@@ -365,13 +311,17 @@ export const CompanyProfile = ({ onClose }: CompanyProfileProps): JSX.Element =>
             <Button
               onClick={handleAction}
               disabled={saving}
-              className={`rounded-lg h-[50px] px-10 [font-family:'Jost',Helvetica] font-bold text-lg shadow-md transition-all ${
+              className={`rounded-lg h-[50px] px-10 font-bold text-lg shadow-md transition-all ${
                 isEditing
                   ? "bg-green-500 hover:bg-green-600 text-white"
                   : "bg-[#ff9d00] hover:bg-[#ff8f00] text-white"
               }`}
             >
-              {saving ? "Saving..." : isEditing ? "Save Changes" : "Edit Profile"}
+              {saving
+                ? "Saving..."
+                : isEditing
+                  ? "Save Changes"
+                  : "Edit Profile"}
             </Button>
           </div>
         </CardContent>

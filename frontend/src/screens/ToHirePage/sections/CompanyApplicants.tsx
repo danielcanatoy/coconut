@@ -8,7 +8,7 @@ interface Applicant {
   first_name: string;
   last_name: string;
   job_title: string;
-  status: "Pending" | "Approved" | "Rejected";
+  status: "pending" | "approved" | "rejected"; // ✅ lowercase
   applied_at: string;
   mobile_number: string;
   skills: string;
@@ -18,16 +18,15 @@ interface Applicant {
 export const CompanyApplicants = (): JSX.Element => {
   const [currentTime, setCurrentTime] = useState<string>("");
   const [applicants, setApplicants] = useState<Applicant[]>([]);
-  const [selectedStatus, setSelectedStatus] = useState<"Approved" | "Rejected">(
-    "Approved",
-  );
+  const [selectedStatus, setSelectedStatus] = useState<"approved" | "rejected">(
+    "approved",
+  ); // ✅ lowercase
   const [panelVisible, setPanelVisible] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const API_URL = "http://localhost:5000/api/company";
   const token = localStorage.getItem("token");
 
-  // 1. Clock Logic
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentTime(
@@ -42,14 +41,11 @@ export const CompanyApplicants = (): JSX.Element => {
     return () => clearInterval(intervalId);
   }, []);
 
-  // 2. Fetch Applicants (Isang version na lang at may Error Handling)
   const fetchApplicants = useCallback(async () => {
     if (!token) {
-      console.error("No token found");
       setLoading(false);
       return;
     }
-
     try {
       setLoading(true);
       const response = await axios.get(`${API_URL}/applicants`, {
@@ -57,29 +53,26 @@ export const CompanyApplicants = (): JSX.Element => {
       });
       setApplicants(Array.isArray(response.data) ? response.data : []);
     } catch (err: any) {
-      if (err.response?.status === 401) {
-        console.error("Unauthorized: Token might be .");
-      } else {
-        console.error("Fetch Error:", err.message);
-      }
+      console.error("Fetch Error:", err.message);
+      setApplicants([]);
     } finally {
       setLoading(false);
     }
-  }, [token, API_URL]);
+  }, [token]);
 
   useEffect(() => {
     fetchApplicants();
   }, [fetchApplicants]);
 
-  // 3. Decision Handler
+  // ✅ lowercase decision values
   const handleDecision = async (
     id: number,
-    decision: "Approved" | "Rejected",
+    decision: "approved" | "rejected",
   ) => {
     try {
       const response = await axios.put(
         `${API_URL}/applications/${id}/status`,
-        { status: decision },
+        { status: decision }, // ✅ sends lowercase
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
@@ -160,16 +153,16 @@ export const CompanyApplicants = (): JSX.Element => {
                     <div className="flex gap-3">
                       <Button
                         onClick={() =>
-                          handleDecision(applicant.application_id, "Approved")
-                        }
+                          handleDecision(applicant.application_id, "approved")
+                        } // ✅ lowercase
                         className="bg-green-600 hover:bg-green-700 text-white rounded-xl px-6 font-bold"
                       >
                         Approve
                       </Button>
                       <Button
                         onClick={() =>
-                          handleDecision(applicant.application_id, "Rejected")
-                        }
+                          handleDecision(applicant.application_id, "rejected")
+                        } // ✅ lowercase
                         className="bg-red-500 hover:bg-red-600 text-white rounded-xl px-6 font-bold"
                       >
                         Reject
@@ -195,42 +188,56 @@ export const CompanyApplicants = (): JSX.Element => {
               <h3 className="text-2xl font-bold">Approval History</h3>
               <div className="flex gap-2">
                 <button
-                  onClick={() => setSelectedStatus("Approved")}
-                  className={`px-5 py-2 rounded-full text-sm font-bold ${selectedStatus === "Approved" ? "bg-green-500 text-white" : "bg-white text-black"}`}
+                  onClick={() => setSelectedStatus("approved")}
+                  className={`px-5 py-2 rounded-full text-sm font-bold ${
+                    selectedStatus === "approved"
+                      ? "bg-green-500 text-white"
+                      : "bg-white text-black"
+                  }`}
                 >
                   Approved
                 </button>
                 <button
-                  onClick={() => setSelectedStatus("Rejected")}
-                  className={`px-5 py-2 rounded-full text-sm font-bold ${selectedStatus === "Rejected" ? "bg-red-500 text-white" : "bg-white text-black"}`}
+                  onClick={() => setSelectedStatus("rejected")}
+                  className={`px-5 py-2 rounded-full text-sm font-bold ${
+                    selectedStatus === "rejected"
+                      ? "bg-red-500 text-white"
+                      : "bg-white text-black"
+                  }`}
                 >
                   Rejected
                 </button>
               </div>
             </div>
             <div className="p-6 overflow-y-auto flex-1">
-              <table className="w-full text-left">
-                <thead className="border-b-2">
-                  <tr>
-                    <th className="py-4 px-4 text-gray-500">Name</th>
-                    <th className="py-4 px-4 text-gray-500">Position</th>
-                    <th className="py-4 px-4 text-gray-500">Date Applied</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {historyApplicants.map((h) => (
-                    <tr key={h.application_id} className="border-b">
-                      <td className="py-4 px-4 font-bold">
-                        {h.first_name} {h.last_name}
-                      </td>
-                      <td className="py-4 px-4">{h.job_title}</td>
-                      <td className="py-4 px-4">
-                        {new Date(h.applied_at).toLocaleDateString()}
-                      </td>
+              {historyApplicants.length === 0 ? (
+                <div className="text-center py-10 text-gray-400">
+                  No {selectedStatus} applications yet
+                </div>
+              ) : (
+                <table className="w-full text-left">
+                  <thead className="border-b-2">
+                    <tr>
+                      <th className="py-4 px-4 text-gray-500">Name</th>
+                      <th className="py-4 px-4 text-gray-500">Position</th>
+                      <th className="py-4 px-4 text-gray-500">Date Applied</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {historyApplicants.map((h) => (
+                      <tr key={h.application_id} className="border-b">
+                        <td className="py-4 px-4 font-bold">
+                          {h.first_name} {h.last_name}
+                        </td>
+                        <td className="py-4 px-4">{h.job_title}</td>
+                        <td className="py-4 px-4">
+                          {new Date(h.applied_at).toLocaleDateString()}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
             <div className="p-6 border-t">
               <Button
