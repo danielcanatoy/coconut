@@ -21,7 +21,7 @@ export const LoginPage = (): JSX.Element => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ email, password }),
+        body: JSON. stringify({ email, password }),
       });
 
       const data = await res.json();

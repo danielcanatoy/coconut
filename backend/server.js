@@ -14,12 +14,10 @@ const app = express();
 
 // ✅ CORS - allows local dev + production frontend
 app.use(cors({
-  origin: [
-    "http://localhost:3000",
-    "http://localhost:5173",
-    process.env.FRONTEND_URL, // production frontend URL (Railway)
-  ],
-  credentials: true
+  origin: true, // allows all origins temporarily
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
 app.use(cookieParser());
